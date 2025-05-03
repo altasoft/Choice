@@ -1,4 +1,4 @@
-﻿# AltaSoft.ChoiceGenerator
+﻿# AltaSoft.Choice
 
 [![NuGet - AltaSoft.Choice](https://img.shields.io/nuget/v/AltaSoft.Choice?label=AltaSoft.Choice)](https://www.nuget.org/packages/AltaSoft.Choice)
 [![NuGet - AltaSoft.Choice.Generator](https://img.shields.io/nuget/v/AltaSoft.Choice.Generator?label=AltaSoft.Choice.Generator)](https://www.nuget.org/packages/AltaSoft.Choice.Generator)
