@@ -4,24 +4,28 @@ using System.Text.Json.Serialization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using AltaSoft.Choice;
 
 namespace TestNamespace;
 
-//#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+#pragma warning disable CS0628 // New protected member declared in sealed type
+// ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Local
 
 public sealed partial class Authorisation1ChoicePrototype : IXmlSerializable
 {
     /// <summary>
     /// <para>Specifies the authorisation, in a coded form.</para>
     /// </summary>
-    [XmlValue("Cd")]
+    [XmlTag("Cd")]
     [JsonPropertyName("cd")]
     public partial Authorisation1Code? Code { get; set; }
 
     /// <summary>
     /// <para>Specifies the authorisation, in a free text form.</para>
     /// </summary>
-    [XmlValue("Prtry")]
+    [XmlTag("Prtry")]
     public partial Proprietary? Proprietary { get; set; }
 
     //----------------------------
@@ -34,8 +38,8 @@ public sealed partial class Authorisation1ChoicePrototype : IXmlSerializable
     private static string CodeToString(Authorisation1Code value) => value.ToString();
 
     // Conditional if not methods != 2
-    private static readonly XmlSerializer s_codeSerializer = new XmlSerializer(typeof(Authorisation1Code));
-    private static readonly XmlSerializer s_properietarySerializer = new XmlSerializer(typeof(Proprietary));
+    //private static readonly XmlSerializer s_codeSerializer = new XmlSerializer(typeof(Authorisation1Code));
+    private static readonly XmlSerializer s_proprietarySerializer = new(typeof(Proprietary));
 
     /// <summary>
     /// <para>Choice enum </para>
@@ -67,7 +71,8 @@ public sealed partial class Authorisation1ChoicePrototype : IXmlSerializable
     /// Specifies the authorisation, in a free text form.
     /// </summary>
     [DisallowNull]
-    [NotNullIfNotNull(nameof(_proprietary))]
+    //[NotNullIfNotNull(nameof(_proprietary))]
+    //[return: NotNull]
     public partial Proprietary? Proprietary
     {
         get => _proprietary;
@@ -138,7 +143,7 @@ public sealed partial class Authorisation1ChoicePrototype : IXmlSerializable
     /// <inheritdoc/>>
     public void ReadXml(XmlReader reader)
     {
-        if (reader is null) throw new ArgumentNullException(nameof(reader));
+        ArgumentNullException.ThrowIfNull(reader);
 
         reader.MoveToContent();
 
@@ -164,7 +169,7 @@ public sealed partial class Authorisation1ChoicePrototype : IXmlSerializable
                     break;
 
                 case "Prtry":
-                    Proprietary = (Proprietary)(s_properietarySerializer.Deserialize(reader) ?? throw new XmlException("aaaaaaaaaaaaaaaa"));
+                    Proprietary = (Proprietary)(s_proprietarySerializer.Deserialize(reader) ?? throw new XmlException("aaaaaaaaaaaaaaaa"));
                     sawChoice = true;
                     break;
 
@@ -183,6 +188,8 @@ public sealed partial class Authorisation1ChoicePrototype : IXmlSerializable
     /// <inheritdoc/>>
     public void WriteXml(XmlWriter writer)
     {
+        ArgumentNullException.ThrowIfNull(writer);
+
         switch (ChoiceType)
         {
             case ChoiceOf.Code:
@@ -227,6 +234,7 @@ public sealed partial class Authorisation1ChoicePrototype : IXmlSerializable
 public class Proprietary
 {
     public string Other { get; set; }
+    public Proprietary(string other) => Other = other;
 }
 
 public enum Authorisation1Code
@@ -234,14 +242,6 @@ public enum Authorisation1Code
     One,
     Two
 }
-
-internal class XmlValueAttribute : Attribute
-{
-    private string _v;
-
-    public XmlValueAttribute(string v) => _v = v;
-}
-
 
 public static class Test
 {
@@ -254,7 +254,7 @@ public static class Test
             Console.WriteLine();
         }
 
-        ch.Proprietary = new Proprietary { Other = "Test" };
+        ch.Proprietary = new Proprietary("Test");
         ch.Proprietary = null;
         if (ch.Proprietary is null)
         {

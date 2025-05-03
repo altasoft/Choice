@@ -8,4 +8,3 @@ namespace AltaSoft.Choice;
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 public sealed class ChoiceAttribute : Attribute;
-

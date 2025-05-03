@@ -18,9 +18,9 @@ internal static class Executor
     /// Executes the generation of domain primitives based on the provided parameters.
     /// </summary>
     /// <param name="typesToGenerate">The list of domain primitives to generate.</param>
-    /// <param name="compilation"> compilation unit </param>
+    /// /// <param name="_"> compilation unit </param>
     /// <param name="context">The source production context.</param>
-    internal static void Execute(in ImmutableArray<INamedTypeSymbol?> typesToGenerate, in Compilation compilation, in SourceProductionContext context)
+    internal static void Execute(in ImmutableArray<INamedTypeSymbol?> typesToGenerate, in Compilation _, in SourceProductionContext context)
     {
         if (typesToGenerate.IsDefaultOrEmpty)
             return;
@@ -29,22 +29,22 @@ internal static class Executor
         {
             foreach (var typeSymbol in typesToGenerate)
             {
-                if (typeSymbol is not INamedTypeSymbol symbol) // Will never happen
+                if (typeSymbol is null) // Will never happen
                     continue;
 
-                if (!(symbol.GetModifiers() ?? "").Contains("partial"))
+                if (!(typeSymbol.GetModifiers() ?? "").Contains("partial"))
                 {
-                    context.ReportDiagnostic(DiagnosticHelper.ClassMustBePartial(symbol.Locations.FirstOrDefault()));
+                    context.ReportDiagnostic(DiagnosticHelper.ClassMustBePartial(typeSymbol.Locations.FirstOrDefault()));
                 }
 
-                var partialProperties = symbol.GetMembersOfType<IPropertySymbol>().Where(x
+                var partialProperties = typeSymbol.GetMembersOfType<IPropertySymbol>().Where(x
                     => x is
                     {
                         IsStatic: false, IsWriteOnly: false, CanBeReferencedByName: true, IsPartialDefinition: true,
                         DeclaredAccessibility: Accessibility.Public
                     }).ToList();
 
-                var sb = Process(typeSymbol, partialProperties, compilation);
+                var sb = Process(typeSymbol, partialProperties);
                 context.AddSource($"{typeSymbol.Name}.g.cs", sb.ToString());
             }
 
@@ -55,10 +55,10 @@ internal static class Executor
         }
     }
 
-    private static PropertyDetails ProcessProperty(IPropertySymbol propertySymbol, Compilation compilation)
+    private static PropertyDetails ProcessProperty(IPropertySymbol propertySymbol)
     {
-        var xmlElemAttribute = propertySymbol.GetAttributes().FirstOrDefault(x => x.AttributeClass?.ToDisplayString() == Constants.XmlElementAttributeFullName);
-        var xmlElementName = (string?)xmlElemAttribute?.ConstructorArguments[0].Value ?? propertySymbol.Name;
+        var xmlTagAttribute = propertySymbol.GetAttributes().FirstOrDefault(x => x.AttributeClass?.ToDisplayString() == Constants.XmlTagAttributeFullName);
+        var xmlElementName = (string?)xmlTagAttribute?.ConstructorArguments[0].Value ?? propertySymbol.Name;
 
         var typeFullName = propertySymbol.Type.GetFriendlyName();
         var propertyName = propertySymbol.Name;
@@ -68,13 +68,13 @@ internal static class Executor
             typeName: typeFullName.Replace("?", ""),
             @namespace: propertySymbol.ContainingNamespace.ToDisplayString(),
             xmlNameValue: xmlElementName,
-            summary: propertySymbol.GetSummaryText(compilation),
+            summary: propertySymbol.GetSummaryText(),
             typeSymbol: propertySymbol.Type);
     }
 
-    private static SourceCodeBuilder Process(INamedTypeSymbol typeSymbol, List<IPropertySymbol> properties, Compilation compilation)
+    private static SourceCodeBuilder Process(INamedTypeSymbol typeSymbol, List<IPropertySymbol> properties)
     {
-        var processedProperties = properties.ConvertAll(x => ProcessProperty(x, compilation));
+        var processedProperties = properties.ConvertAll(ProcessProperty);
         var usingStatements = processedProperties.Select(x => x.Namespace).Concat(s_baseNamespaces);
         var sb = new SourceCodeBuilder();
 
@@ -87,8 +87,7 @@ internal static class Executor
 
         sb.NewLine();
 
-        var s = (PropertyDetails p) => $"<para><item><term>{p.XmlNameValue}</term></item><description>{p.Name} <see cref = \"{p.TypeName}\"/></description> - {p.Summary}  </para>";
-        var summary = $"<para> Choice element. One of: <list type=\"bullet\"/> {string.Join("", processedProperties.Select(s))} </para>";
+        var summary = $"<para> Choice element. One of: <list type=\"bullet\"/> {string.Join("", processedProperties.Select(Func))} </para>";
 
         sb.AppendSummary(summary);
         foreach (var propertySymbol in processedProperties)
@@ -187,6 +186,8 @@ internal static class Executor
         sb.CloseBracket();
 
         return sb;
+
+        static string Func(PropertyDetails p) => $"<para><item><term>{p.XmlNameValue}</term></item><description>{p.Name} <see cref = \"{p.TypeName}\"/></description> - {p.Summary}  </para>";
     }
 
     private static void ProcessMatch(SourceCodeBuilder sb, List<PropertyDetails> processedProperties)

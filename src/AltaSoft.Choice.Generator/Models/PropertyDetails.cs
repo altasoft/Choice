@@ -5,31 +5,31 @@ namespace AltaSoft.Choice.Generator.Models;
 internal sealed class PropertyDetails
 {
     /// <summary>
-    /// Gets or sets the name of the property.
+    /// The name of the property.
     /// </summary>
     internal string Name { get; private set; }
     /// <summary>
-    /// Gets or sets the type name of the property.
+    /// The type name of the property.
     /// </summary>
     internal string TypeName { get; private set; }
 
     /// <summary>
-    /// Gets or sets the namespace of the property.
+    /// The namespace of the property.
     /// </summary>
     internal string Namespace { get; private set; }
 
     /// <summary>
-    /// Gets or sets the XML name value of the property.
+    /// The XML name value of the property.
     /// </summary>
     internal string XmlNameValue { get; private set; }
 
     /// <summary>
-    /// Gets or sets the summary documentation for the property.
+    /// The summary documentation for the property.
     /// </summary>
     internal string? Summary { get; private set; }
 
     /// <summary>
-    /// Gets or sets the type symbol of the property.
+    /// The type symbol of the property.
     /// </summary>
     internal ITypeSymbol TypeSymbol { get; private set; }
 

@@ -80,7 +80,7 @@ public sealed class SourceCodeBuilder
     /// <returns>A string that represents the specified number of indentation strings.</returns>
     public static string GetIndentation(int count = 1) => string.Concat(Enumerable.Repeat(IndentationString, count));
 
-    /// <summary>Gets or sets the length of the current <see cref="T:System.Text.StringBuilder" /> object.</summary>
+    /// <summary>The length of the current <see cref="T:System.Text.StringBuilder" /> object.</summary>
     /// <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than zero or greater than <see cref="P:System.Text.StringBuilder.MaxCapacity" />.</exception>
     /// <returns>The length of this instance.</returns>
     public int Length

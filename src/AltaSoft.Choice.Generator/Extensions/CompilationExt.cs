@@ -15,9 +15,8 @@ internal static class CompilationExt
     /// Reads Summary of a symbol from its XML documentation comment.
     /// </summary>
     /// <param name="symbol"></param>
-    /// <param name="compilation"></param>
     /// <returns></returns>
-    internal static string? GetSummaryText(this ISymbol symbol, Compilation compilation)
+    internal static string? GetSummaryText(this ISymbol symbol)
     {
         // Try to get the XML documentation comment
         var xmlText = symbol.GetDocumentationCommentXml();
@@ -28,7 +27,7 @@ internal static class CompilationExt
         try
         {
             var xmlDoc = System.Xml.Linq.XDocument.Parse(xmlText);
-            var summary = xmlDoc.Root?.Element("summary")?.Value?.Trim();
+            var summary = xmlDoc.Root?.Element("summary")?.Value.Trim();
             return summary;
         }
         catch
