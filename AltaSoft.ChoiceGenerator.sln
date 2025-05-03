@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BF9447CC-2D00-495A-A8C3-D4890EADB01B}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{09A03F75-1F18-45BC-9D0A-289AC607DAD0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHubActions", "GitHubActions", "{A7BFF96E-3DFF-4132-AD2B-7C529C14A3E8}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build_nuget_dont_publish.yml = .github\workflows\build_nuget_dont_publish.yml
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		.github\workflows\publish_nuget.yml = .github\workflows\publish_nuget.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaSoft.Choice", "src\AltaSoft.Choice\AltaSoft.Choice.csproj", "{42A9A4B7-CA75-B014-784A-36CD45EE8B24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaSoft.Choice.Generator", "src\AltaSoft.Choice.Generator\AltaSoft.Choice.Generator.csproj", "{41EB92A1-3DF2-22C7-C804-3CCAA0E9C0A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaSoft.Choice.Generator.SnapshotTests", "tests\AltaSoft.Choice.Generator.SnapshotTests\AltaSoft.Choice.Generator.SnapshotTests.csproj", "{963D1721-0AA3-5DB0-573A-EEE084A072EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaSoft.ChoiceGenerator.Tests", "tests\AltaSoft.ChoiceGenerator.Tests\AltaSoft.ChoiceGenerator.Tests.csproj", "{8F75821D-C426-F6AF-34FD-17E73E0F7CB2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{42A9A4B7-CA75-B014-784A-36CD45EE8B24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42A9A4B7-CA75-B014-784A-36CD45EE8B24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42A9A4B7-CA75-B014-784A-36CD45EE8B24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42A9A4B7-CA75-B014-784A-36CD45EE8B24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41EB92A1-3DF2-22C7-C804-3CCAA0E9C0A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41EB92A1-3DF2-22C7-C804-3CCAA0E9C0A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41EB92A1-3DF2-22C7-C804-3CCAA0E9C0A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41EB92A1-3DF2-22C7-C804-3CCAA0E9C0A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{963D1721-0AA3-5DB0-573A-EEE084A072EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{963D1721-0AA3-5DB0-573A-EEE084A072EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{963D1721-0AA3-5DB0-573A-EEE084A072EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{963D1721-0AA3-5DB0-573A-EEE084A072EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F75821D-C426-F6AF-34FD-17E73E0F7CB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F75821D-C426-F6AF-34FD-17E73E0F7CB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F75821D-C426-F6AF-34FD-17E73E0F7CB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F75821D-C426-F6AF-34FD-17E73E0F7CB2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A7BFF96E-3DFF-4132-AD2B-7C529C14A3E8} = {BF9447CC-2D00-495A-A8C3-D4890EADB01B}
+		{963D1721-0AA3-5DB0-573A-EEE084A072EC} = {09A03F75-1F18-45BC-9D0A-289AC607DAD0}
+		{8F75821D-C426-F6AF-34FD-17E73E0F7CB2} = {09A03F75-1F18-45BC-9D0A-289AC607DAD0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {84804F7F-F00C-454C-A90E-4013B6EA6263}
+	EndGlobalSection
+EndGlobal

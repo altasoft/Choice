@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<IncludeBuildOutput>false</IncludeBuildOutput>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<IsRoslynComponent>true</IsRoslynComponent>
+
+		<!-- This ensures the output of this project is treated as an analyzer by projects that reference it -->
+		<IncludeBuildOutput>false</IncludeBuildOutput>
+		<!-- Specify that this is a development dependency, which won't be included transitively by projects using your package -->
+		<DevelopmentDependency>true</DevelopmentDependency>
+
+		<Title>AltaSoft.Choice.Generator</Title>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" PrivateAssets="all" />
+	</ItemGroup>
+
+	<!-- This ensures the library will be packaged as a source generator when we use `dotnet pack` -->
+	<ItemGroup>
+		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="lib\netstandard2.0\_._" Pack="true" PackagePath="lib\netstandard2.0\" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,32 @@
+<Project>
+  <PropertyGroup>
+	<OutputType>Library</OutputType>
+	<Nullable>enable</Nullable>
+	<LangVersion>Latest</LangVersion>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+	<Authors>ALTA Software llc.</Authors>
+	<Product>Choice generator</Product>
+	<Company>ALTA Software llc.</Company>
+	<Copyright>Copyright © 2024 ALTA Software llc.</Copyright>
+	<Version>1.1.0</Version>
+  </PropertyGroup>
+
+  <PropertyGroup>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<ProjectUrl>https://github.com/altasoft/ChoiceGenerator</ProjectUrl>
+	<RepositoryUrl>https://github.com/altasoft/ChoiceGenerator</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<PackageProjectUrl>https://github.com/altasoft/ChoiceGenerator</PackageProjectUrl>
+	<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+	<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+	<EnableNETAnalyzers>True</EnableNETAnalyzers>
+	<PackageTags>csharp;dotnet;source-generator;discriminated-union;choice-type;strongly-typed;domain-modeling;ddd</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>
