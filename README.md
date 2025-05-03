@@ -176,7 +176,7 @@ public sealed partial class AccountIdentification4Choice
         if(ChoiceType == ChoiceOf.Other)
         	return matchOther(Other!);
 
-        throw new InvalidOperationException($"Invalid code ChoiceType. '{ChoiceType}'");
+        throw new InvalidOperationException($"Invalid ChoiceType. '{ChoiceType}'");
     }
 
     /// <summary>
@@ -200,7 +200,7 @@ public sealed partial class AccountIdentification4Choice
             return;
         }
 
-        throw new InvalidOperationException($"Invalid code ChoiceType. '{ChoiceType}'");
+        throw new InvalidOperationException($"Invalid ChoiceType. '{ChoiceType}'");
     }
 
     /// <summary>

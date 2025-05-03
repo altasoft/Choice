@@ -20,10 +20,7 @@ internal static class Executor
     /// <param name="typesToGenerate">The list of domain primitives to generate.</param>
     /// <param name="compilation"> compilation unit </param>
     /// <param name="context">The source production context.</param>
-    internal static void Execute(
-            in ImmutableArray<INamedTypeSymbol?> typesToGenerate,
-            in Compilation compilation,
-            in SourceProductionContext context)
+    internal static void Execute(in ImmutableArray<INamedTypeSymbol?> typesToGenerate, in Compilation compilation, in SourceProductionContext context)
     {
         if (typesToGenerate.IsDefaultOrEmpty)
             return;
@@ -226,7 +223,7 @@ internal static class Executor
 
         }
 
-        sb.AppendLine("throw new InvalidOperationException($\"Invalid code ChoiceType. '{ChoiceType}'\");");
+        sb.AppendLine("throw new InvalidOperationException($\"Invalid ChoiceType. '{ChoiceType}'\");");
         sb.CloseBracket();
 
     }
@@ -267,7 +264,7 @@ internal static class Executor
 
         }
 
-        sb.AppendLine("throw new InvalidOperationException($\"Invalid code ChoiceType. '{ChoiceType}'\");");
+        sb.AppendLine("throw new InvalidOperationException($\"Invalid ChoiceType. '{ChoiceType}'\");");
         sb.CloseBracket();
     }
 

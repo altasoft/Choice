@@ -107,7 +107,7 @@ public sealed partial class Authorisation1Choice
         if(ChoiceType == ChoiceOf.Proprietary)
         	return matchProprietary(Proprietary!);
 
-        throw new InvalidOperationException($"Invalid code ChoiceType. '{ChoiceType}'");
+        throw new InvalidOperationException($"Invalid ChoiceType. '{ChoiceType}'");
     }
 
     /// <summary>
@@ -131,7 +131,7 @@ public sealed partial class Authorisation1Choice
             return;
         }
 
-        throw new InvalidOperationException($"Invalid code ChoiceType. '{ChoiceType}'");
+        throw new InvalidOperationException($"Invalid ChoiceType. '{ChoiceType}'");
     }
 
     /// <summary>
