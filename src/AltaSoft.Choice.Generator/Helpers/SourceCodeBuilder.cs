@@ -291,6 +291,51 @@ public sealed class SourceCodeBuilder
     public SourceCodeBuilder Append(string line, bool ensureIndentation = true) => InternalAppend(line, false, ensureIndentation);
 
     /// <summary>
+    /// Appends a switch case statement to the source code builder.
+    /// </summary>
+    /// <param name="case">The case value to append.</param>
+    /// <returns>A reference to this <see cref="SourceCodeBuilder"/> instance.</returns>
+    public SourceCodeBuilder AppendSwitchCase(string @case)
+    {
+        Append("case ").Append(@case).AppendLine(":");
+        IncreaseIndentations();
+
+        return this;
+    }
+    /// <summary>
+    /// Appends a switch case statement to the source code builder.
+    /// </summary>
+    /// <returns>A reference to this <see cref="SourceCodeBuilder"/> instance.</returns>
+    public SourceCodeBuilder AppendDefaultSwitchCase()
+    {
+        AppendLine("default:");
+        IncreaseIndentations();
+
+        return this;
+    }
+
+    /// <summary>
+    /// Closes a switch case block by decreasing the indentation level.
+    /// </summary>
+    /// <returns>
+    /// A reference to this <see cref="SourceCodeBuilder"/> instance with the indentation level decreased.
+    /// </returns>
+    public SourceCodeBuilder CloseSwitchCase()
+    {
+        return DecreaseIndentations();
+    }
+    /// <summary>
+    /// Appends a line of text to the source code with an option to ensure proper indentation. if the line is not empty. otherwise returns same SourceCodeBuilder
+    /// </summary>
+    /// <param name="line">The line of text to be appended.</param>
+    /// <param name="ensureIndentation">A boolean indicating whether to ensure proper indentation.</param>
+    /// <returns>A reference to this <see cref="SourceCodeBuilder"/> instance.</returns>
+    public SourceCodeBuilder AppendIfNotEmpty(string line, bool ensureIndentation = true)
+    {
+        return line == string.Empty ? this : InternalAppend(line, false, ensureIndentation);
+    }
+
+    /// <summary>
     /// Appends a series of lines, separated by newline characters, to the source code.
     /// </summary>
     /// <param name="lines">A string containing multiple lines of text to be appended.</param>
@@ -458,18 +503,18 @@ public sealed class SourceCodeBuilder
     /// <summary>
     /// Increases the level of indentation in the source code builder.
     /// </summary>
-    public SourceCodeBuilder IncreaseIndentations()
+    public SourceCodeBuilder IncreaseIndentations(string? indentation = null)
     {
-        _indentations.Append(IndentationString);
+        _indentations.Append(indentation ?? IndentationString);
         return this;
     }
 
     /// <summary>
     /// Decreases the level of indentation in the source code builder by removing the indentation string from the beginning.
     /// </summary>
-    public SourceCodeBuilder DecreaseIndentations()
+    public SourceCodeBuilder DecreaseIndentations(string? indentation = null)
     {
-        _indentations.Remove(0, IndentationString.Length);
+        _indentations.Remove(0, (indentation ?? IndentationString).Length);
         return this;
     }
 

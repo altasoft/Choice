@@ -15,6 +15,8 @@
 - Supports XML and System.Text.Json serialization
 - Includes `CreateAsXxx`, `Match`, and `Switch` methods
 - Auto-generates enum for valid choice types
+- Implicit conversion operators for easy usage
+- Generates XmlSerializer
 
 ---
 
@@ -40,24 +42,20 @@ using AltaSoft.Choice;
 namespace AltaSoft.ChoiceGenerator.Tests;
 
 [Choice]
-public sealed partial class AccountIdentification4Choice
+public sealed partial class Authorisation1Choice
 {
+    /// <summary>
+    /// <para>Specifies the authorisation, in a coded form.</para>
+    /// </summary>
+    [XmlTag("Cd")]
+    [JsonPropertyName("cd")]
+    public partial Authorisation1Code? Code { get; set; }
 
     /// <summary>
-    /// <para>International Bank Account Number (IBAN) - identifier used internationally by financial institutions to uniquely identify the account of a customer. Further specifications of the format and content of the IBAN can be found in the standard ISO 13616 &quot;Banking and related financial services - International Bank Account Number (IBAN)&quot; version 1997-10-01, or later revisions.</para>
+    /// <para>Specifies the authorisation, in a free text form.</para>
     /// </summary>
-    [JsonPropertyName("iban")]
-    [XmlElement("IBAN")]
-    public partial IBAN2007Identifier? IBAN { get; set; }
-
-    /// <summary>
-    /// <para>Unique identification of an account, as assigned by the account servicer, using an identification scheme.</para>
-    /// </summary>
-
-    [JsonPropertyName("other")]
-    [XmlElement("other")]
-    public partial GenericAccountIdentification1? Other { get; set; }
-
+    [XmlTag("Prtry")]
+    public partial Proprietary? Proprietary { get; set; }
 }
 ```
 
@@ -78,168 +76,278 @@ Below is the generated code for the example above:
 #nullable enable
 
 using AltaSoft.ChoiceGenerator.Tests;
+using AltaSoft.Choice;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Xml;
 using System.Xml.Serialization;
-
+using System.Xml.Schema;
 
 namespace AltaSoft.ChoiceGenerator.Tests;
 
-public sealed partial class AccountIdentification4Choice
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+#pragma warning disable CS0628 // New protected member declared in sealed type
+
+public sealed partial class Authorisation1Choice : IXmlSerializable
 {
-
-    /// <summary>
-    /// <para> Choice element. One of: <list type="bullet"/> <para><item><term>IBAN</term></item><description>IBAN <see cref = "IBAN2007Identifier"/></description> - International Bank Account Number (IBAN) - identifier used internationally by financial institutions to uniquely identify the account of a customer. Further specifications of the format and content of the IBAN can be found in the standard ISO 13616 "Banking and related financial services - International Bank Account Number (IBAN)" version 1997-10-01, or later revisions.  </para><para><item><term>other</term></item><description>Other <see cref = "GenericAccountIdentification1"/></description> - Unique identification of an account, as assigned by the account servicer, using an identification scheme.  </para> </para>
-    /// </summary>
-    [XmlElement("IBAN", typeof(IBAN2007Identifier))]
-    [XmlElement("other", typeof(GenericAccountIdentification1))]
-    [XmlChoiceIdentifier(nameof(ChoiceType))]
-    [JsonIgnore]
-    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-    public object Item { get; set; } = default!;
-
     /// <summary>
     /// <para>Choice enum </para>
     /// </summary>
-    [XmlIgnore]
     [JsonIgnore]
-    public ChoiceOf ChoiceType { get; set; }
+    public ChoiceOf ChoiceType { get; private set; }
+
+    private AltaSoft.ChoiceGenerator.Tests.Authorisation1Code? _code;
 
     /// <summary>
-    /// International Bank Account Number (IBAN) - identifier used internationally by financial institutions to uniquely identify the account of a customer. Further specifications of the format and content of the IBAN can be found in the standard ISO 13616 "Banking and related financial services - International Bank Account Number (IBAN)" version 1997-10-01, or later revisions.
+    /// Specifies the authorisation, in a coded form.
     /// </summary>
-    [XmlIgnore]
-    [JsonInclude]
-    public partial IBAN2007Identifier? IBAN { get => ChoiceType == ChoiceOf.IBAN ? GetAsIBAN() : (IBAN2007Identifier?)null; set => SetAsIBAN(value ?? throw new JsonException("Choice value cannot be null")); }
-
-    /// <summary>
-    /// Unique identification of an account, as assigned by the account servicer, using an identification scheme.
-    /// </summary>
-    [XmlIgnore]
-    [JsonInclude]
-    public partial GenericAccountIdentification1? Other { get => ChoiceType == ChoiceOf.Other ? GetAsOther() : (GenericAccountIdentification1?)null; set => SetAsOther(value ?? throw new JsonException("Choice value cannot be null")); }
-
-
-    private IBAN2007Identifier GetAsIBAN() => (IBAN2007Identifier)Item;
-
-    private void SetAsIBAN(IBAN2007Identifier value)
+    [DisallowNull]
+    public partial AltaSoft.ChoiceGenerator.Tests.Authorisation1Code? Code
     {
-        Item = value;
-        ChoiceType = ChoiceOf.IBAN;
+        get => _code;
+        set
+        {
+            _code = value ?? throw new InvalidOperationException("Choice value cannot be null");
+            _proprietary = null;
+            ChoiceType = ChoiceOf.Code;
+        }
     }
 
+    private static readonly XmlSerializer s_codeSerializer = new (typeof(AltaSoft.ChoiceGenerator.Tests.Authorisation1Code), new XmlRootAttribute("Cd"));
+    private Proprietary? _proprietary;
+
     /// <summary>
-    /// Creates a new <see cref="AltaSoft.ChoiceGenerator.Tests.AccountIdentification4Choice"/> instance and sets its value using the specified <see cref="IBAN2007Identifier"/>.
+    /// Specifies the authorisation, in a free text form.
     /// </summary>
-    /// <param name="value">The value to assign to the created choice instance.</param>
-    public static AltaSoft.ChoiceGenerator.Tests.AccountIdentification4Choice CreateAsIBAN(IBAN2007Identifier value)
+    [DisallowNull]
+    public partial Proprietary? Proprietary
     {
-        var instance = new AltaSoft.ChoiceGenerator.Tests.AccountIdentification4Choice();
-        instance.SetAsIBAN(value);
-        return instance;
+        get => _proprietary;
+        set
+        {
+            _proprietary = value ?? throw new InvalidOperationException("Choice value cannot be null");
+            _code = null;
+            ChoiceType = ChoiceOf.Proprietary;
+        }
     }
 
-    private GenericAccountIdentification1 GetAsOther() => (GenericAccountIdentification1)Item;
-
-    private void SetAsOther(GenericAccountIdentification1 value)
-    {
-        Item = value;
-        ChoiceType = ChoiceOf.Other;
-    }
+    private static readonly XmlSerializer s_proprietarySerializer = new (typeof(Proprietary), new XmlRootAttribute("Prtry"));
 
     /// <summary>
-    /// Creates a new <see cref="AltaSoft.ChoiceGenerator.Tests.AccountIdentification4Choice"/> instance and sets its value using the specified <see cref="GenericAccountIdentification1"/>.
+    /// Creates a new <see cref="AltaSoft.ChoiceGenerator.Tests.Authorisation1Choice"/> instance and sets its value using the specified <see cref="AltaSoft.ChoiceGenerator.Tests.Authorisation1Code"/>.
     /// </summary>
     /// <param name="value">The value to assign to the created choice instance.</param>
-    public static AltaSoft.ChoiceGenerator.Tests.AccountIdentification4Choice CreateAsOther(GenericAccountIdentification1 value)
-    {
-        var instance = new AltaSoft.ChoiceGenerator.Tests.AccountIdentification4Choice();
-        instance.SetAsOther(value);
-        return instance;
-    }
+    public static AltaSoft.ChoiceGenerator.Tests.Authorisation1Choice CreateAsCode(AltaSoft.ChoiceGenerator.Tests.Authorisation1Code value) => new () { Code = value };
+
+    /// <summary>
+    /// Creates a new <see cref="AltaSoft.ChoiceGenerator.Tests.Authorisation1Choice"/> instance and sets its value using the specified <see cref="Proprietary"/>.
+    /// </summary>
+    /// <param name="value">The value to assign to the created choice instance.</param>
+    public static AltaSoft.ChoiceGenerator.Tests.Authorisation1Choice CreateAsProprietary(Proprietary value) => new () { Proprietary = value };
 
     /// <summary>
     /// <para>Applies the appropriate function based on the current choice type</para>
     /// </summary>
     /// <typeparam name="TResult">The return type of the provided match functions</typeparam>
-    /// <param name="matchIBAN">Function to invoke if the choice is a <see cref="ChoiceOf.IBAN"/> value</param>
-    /// <param name="matchOther">Function to invoke if the choice is a <see cref="ChoiceOf.Other"/> value</param>
+    /// <param name="matchCode">Function to invoke if the choice is a <see cref="ChoiceOf.Code"/> value</param>
+    /// <param name="matchProprietary">Function to invoke if the choice is a <see cref="ChoiceOf.Proprietary"/> value</param>
     public TResult Match<TResult>(
-    	Func<IBAN2007Identifier, TResult> matchIBAN, 
-    	Func<GenericAccountIdentification1, TResult> matchOther)
+    	Func<AltaSoft.ChoiceGenerator.Tests.Authorisation1Code, TResult> matchCode, 
+    	Func<Proprietary, TResult> matchProprietary)
     {
-        if(ChoiceType == ChoiceOf.IBAN)
-        	return matchIBAN(IBAN!);
-
-        if(ChoiceType == ChoiceOf.Other)
-        	return matchOther(Other!);
-
-        throw new InvalidOperationException($"Invalid ChoiceType. '{ChoiceType}'");
+        return ChoiceType switch
+        {
+            ChoiceOf.Code => matchCode(Code!.Value),
+            ChoiceOf.Proprietary => matchProprietary(Proprietary!),
+            _ => throw new InvalidOperationException($"Invalid ChoiceType. '{ChoiceType}'")
+        };
     }
 
     /// <summary>
     /// <para>Applies the appropriate Action based on the current choice type</para>
     /// </summary>
-    /// <param name="matchIBAN">Action to invoke if the choice is a <see cref="ChoiceOf.IBAN"/> value</param>
-    /// <param name="matchOther">Action to invoke if the choice is a <see cref="ChoiceOf.Other"/> value</param>
+    /// <param name="matchCode">Action to invoke if the choice is a <see cref="ChoiceOf.Code"/> value</param>
+    /// <param name="matchProprietary">Action to invoke if the choice is a <see cref="ChoiceOf.Proprietary"/> value</param>
     public void Switch(
-    	Action<IBAN2007Identifier> matchIBAN, 
-    	Action<GenericAccountIdentification1> matchOther)
+    	Action<AltaSoft.ChoiceGenerator.Tests.Authorisation1Code> matchCode, 
+    	Action<Proprietary> matchProprietary)
     {
-        if(ChoiceType == ChoiceOf.IBAN!)
+        switch (ChoiceType)
         {
-            matchIBAN(IBAN!);
-            return;
-        }
+            case ChoiceOf.Code:
+                matchCode(Code!.Value);
+                return;
 
-        if(ChoiceType == ChoiceOf.Other!)
-        {
-            matchOther(Other!);
-            return;
-        }
+            case ChoiceOf.Proprietary:
+                matchProprietary(Proprietary!);
+                return;
 
-        throw new InvalidOperationException($"Invalid ChoiceType. '{ChoiceType}'");
+            default:
+            throw new XmlException($"Invalid ChoiceType. '{ChoiceType}'");
+        }
     }
+
+    /// <inheritdoc/>
+    public XmlSchema? GetSchema() => null;
+
+    /// <inheritdoc/>
+    public void ReadXml(XmlReader reader)
+    {
+        ArgumentNullException.ThrowIfNull(reader);
+
+        reader.MoveToContent();
+
+        if (reader.IsEmptyElement)
+        	throw new XmlException("Authorisation1Choice element must contain exactly one of <Cd> or <Prtry>.");
+
+        reader.ReadStartElement();
+
+        var sawChoice = false;
+        while (reader.MoveToContent() == XmlNodeType.Element)
+        {
+            if (sawChoice)
+            	throw new XmlException("Authorisation1Choice must contain at most one of <Cd> or <Prtry>.");
+
+            switch (reader.LocalName)
+            {
+                case "Cd":
+                    Code = (AltaSoft.ChoiceGenerator.Tests.Authorisation1Code)(s_codeSerializer.Deserialize(reader) ?? throw new XmlException(" The value of Cd cannot be null"));
+                    sawChoice = true;
+                    break;
+
+                case "Prtry":
+                    Proprietary = (Proprietary)(s_proprietarySerializer.Deserialize(reader) ?? throw new XmlException(" The value of Prtry cannot be null"));
+                    sawChoice = true;
+                    break;
+
+                default:
+                    reader.Skip();
+                    break;
+            }
+        }
+
+        reader.ReadEndElement();
+
+        if (!sawChoice)
+        	throw new XmlException("Authorisation1Choice must contain exactly one of <Cd> or <Prtry>");
+    }
+
+    /// <inheritdoc/>
+    public void WriteXml(XmlWriter writer)
+    {
+        ArgumentNullException.ThrowIfNull(writer);
+
+        switch (ChoiceType)
+        {
+            case ChoiceOf.Code:
+                s_codeSerializer.Serialize(writer, Code!, XmlNamespaceHelper.EmptyNamespace);
+                break;
+
+            case ChoiceOf.Proprietary:
+                s_proprietarySerializer.Serialize(writer, Proprietary!, XmlNamespaceHelper.EmptyNamespace);
+                break;
+
+            default:
+                throw new InvalidOperationException($"Invalid ChoiceType. '{ChoiceType}'");
+        }
+    }
+
+    /// <summary>
+    /// Implicitly converts an <see cref="AltaSoft.ChoiceGenerator.Tests.Authorisation1Code"/> to an <see cref="Authorisation1Choice"/>.
+    /// </summary>
+    /// <param name="value">The <see cref="AltaSoft.ChoiceGenerator.Tests.Authorisation1Code"/> to convert.</param>
+    /// <returns>
+    /// <see cref="Authorisation1Choice"/> instance representing the code.
+    /// </returns>
+    public static implicit operator Authorisation1Choice(AltaSoft.ChoiceGenerator.Tests.Authorisation1Code value) => CreateAsCode(value);
+
+    /// <summary>
+    /// Implicitly converts an <see cref="Proprietary"/> to an <see cref="Authorisation1Choice"/>.
+    /// </summary>
+    /// <param name="value">The <see cref="Proprietary"/> to convert.</param>
+    /// <returns>
+    /// <see cref="Authorisation1Choice"/> instance representing the code.
+    /// </returns>
+    public static implicit operator Authorisation1Choice(Proprietary value) => CreateAsProprietary(value);
 
     /// <summary>
     /// <para>Choice enumeration</para>
     /// </summary>
     [Serializable]
-    [XmlType("AccountIdentification4Choice__ChoiceOf")]
     public enum ChoiceOf
     {
         /// <summary>
-        /// International Bank Account Number (IBAN) - identifier used internationally by financial institutions to uniquely identify the account of a customer. Further specifications of the format and content of the IBAN can be found in the standard ISO 13616 "Banking and related financial services - International Bank Account Number (IBAN)" version 1997-10-01, or later revisions.
+        /// Specifies the authorisation, in a coded form.
         /// </summary>
-        [XmlEnum("IBAN")]
-        IBAN, 
+        Code, 
         /// <summary>
-        /// Unique identification of an account, as assigned by the account servicer, using an identification scheme.
+        /// Specifies the authorisation, in a free text form.
         /// </summary>
-        [XmlEnum("other")]
-        Other, 
+        Proprietary, 
     }
 }
+
 ```
 
 ---
 
 ## 💡 Example Usage
 
+### Creating with CreateAs methods
 ```csharp
-var account = AccountIdentification4Choice.CreateAsIBAN("DE89370400440532013000");
+var choice = Authorisation1Choice.CreateAsCode(Authorisation1Code.FileLevelAuthorisationSummary);
 
 var result = choice.Match(
-    iban => $"It's an iban: {iban}",
-    other => $"It's other: {other.ToString()}"
+    code => $"It's a code: {code}",
+    prop => $"It's proprietary: {prop.ToString()}"
 );
 
 choice.Switch(
-    iban => Console.WriteLine($"String: {iban}"),
-    other => Console.WriteLine($"Number: {other.ToString()}")
+    code => Console.WriteLine($"String: {code}"),
+    prop => Console.WriteLine($"Number: {prop.ToString()}")
 );
+```
+
+### Creating using implicit operators
+
+if property types are distinct implicit operators are generated
+```csharp
+Authosiration1Choice choice = Authorisation1Code.FileLevelAuthorisationSummary;
+```
+
+## Advanced Usage
+### XML Serialization
+By default XmlSerialzier is created for all property types however, for enum types you can use Custom methods that will be used to serialize and deserialize xml
+```csharp
+[Choice]
+public sealed partial class Authorisation1Choice
+{
+    /// <summary>
+    /// <para>Specifies the authorisation, in a coded form.</para>
+    /// </summary>
+    [XmlTag("Cd")]
+    [JsonPropertyName("cd")]
+    public partial Authorisation1Code? Code { get; set; }
+
+    /// <summary>
+    /// <para>Specifies the authorisation, in a free text form.</para>
+    /// </summary>
+    [XmlTag("Prtry")]
+    public partial Proprietary? Proprietary { get; set; }
+
+    /// <summary>
+    /// Custom method to Deserialize enums from XML 
+    /// </summary>
+    private static Authorisation1Code StringToCode(string value) => Enum.Parse<Authorisation1Code>(value);
+    /// <summary>
+    /// Custom method to serialzie enum to XML
+    /// </summary>
+    private static string CodeToString(Authorisation1Code value) => value.ToString();
+
+}
 ```
 ---
 

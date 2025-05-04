@@ -16,7 +16,7 @@ public class ChoiceGeneratorTest
 {
 
     [Fact]
-    public Task DomainPrimitiveWithoutTypeConverters_ShouldNotAddJsonConverter()
+    public Task ChoiceTypeShouldGenerateAllMethodsAndCompileCorrectly()
     {
         const string source =
             """
@@ -52,6 +52,46 @@ public class ChoiceGeneratorTest
             {
                 One,
                 Two
+            }
+            """;
+
+        return TestHelper.Verify(source, (_, x, _) =>
+        {
+            Assert.Single(x);
+        });
+    }
+
+    [Fact]
+    public Task ChoiceTypeShouldNotGenerateImplicitMethodsAndCompileCorrectly()
+    {
+        const string source =
+            """
+            using System;
+            using System.Xml;
+            using System.Xml.Schema;
+            using System.Xml.Serialization;
+            using AltaSoft.Choice;
+                              
+            namespace TestNamespace;
+                              
+            [Choice]
+            public sealed partial class Authorisation1Choice
+            {
+                              
+                /// <summary>
+                /// <para>Specifies the authorisation, in a coded form.</para>
+                /// </summary>
+                [XmlElement("Cd")]
+                                 
+                public partial string? Code { get; set; }
+                                   
+                /// <summary>
+                /// <para>Specifies the authorisation, in a free text form.</para>
+                /// </summary>
+                [XmlElement("Prtry")]
+                                 
+                public partial string? Proprietary { get; set; }
+                              
             }
             """;
 

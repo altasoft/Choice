@@ -16,4 +16,10 @@ internal static class Constants
     /// This constant is used to identify the <c>XmlTagAttribute</c> type by its name.
     /// </summary>
     internal const string XmlTagAttributeFullName = "AltaSoft.Choice.XmlTagAttribute";
+
+    /// <summary>
+    /// The fully qualified name of the <c>IXmlSerializable</c> interface.
+    /// This constant is used to identify the <c>IXmlSerializable</c> type by its name.
+    /// </summary>
+    internal const string IXmlSerializableFullName = "IXmlSerializable";
 }

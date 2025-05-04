@@ -8,6 +8,7 @@ internal sealed class PropertyDetails
     /// The name of the property.
     /// </summary>
     internal string Name { get; private set; }
+
     /// <summary>
     /// The type name of the property.
     /// </summary>
@@ -29,17 +30,58 @@ internal sealed class PropertyDetails
     internal string? Summary { get; private set; }
 
     /// <summary>
+    /// The access modifiers for the property's getter.
+    /// </summary>
+    internal Accessibility GetterAccessibility { get; private set; }
+
+    /// <summary>
+    /// The access modifiers for the property's setter.
+    /// </summary>
+    internal Accessibility SetterAccessibility { get; private set; }
+
+    internal string? CustomSerializerMethod { get; private set; }
+    internal string? CustomDeserializerMethod { get; private set; }
+
+    /// <summary>
     /// The type symbol of the property.
     /// </summary>
     internal ITypeSymbol TypeSymbol { get; private set; }
 
-    public PropertyDetails(string name, string typeName, string @namespace, string xmlNameValue, string? summary, ITypeSymbol typeSymbol)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PropertyDetails"/> class.
+    /// </summary>
+    /// <param name="name">The name of the property.</param>
+    /// <param name="typeName">The type name of the property.</param>
+    /// <param name="namespace">The namespace of the property.</param>
+    /// <param name="xmlNameValue">The XML name value of the property.</param>
+    /// <param name="summary">The summary documentation for the property.</param>
+    /// <param name="getterAccessibility">The access modifiers for the property's getter.</param>
+    /// <param name="setterAccessibility">The access modifiers for the property's setter.</param>
+    /// <param name="customSerializerMethod">custom serializer method used for enums</param>
+    /// <param name="customDeserializerMethod">custom deserializer method used for enums</param>
+    /// <param name="typeSymbol">The type symbol of the property.</param>
+    public PropertyDetails(
+        string name,
+        string typeName,
+        string @namespace,
+        string xmlNameValue,
+        string? summary,
+        Accessibility getterAccessibility,
+        Accessibility setterAccessibility,
+        string? customSerializerMethod,
+        string? customDeserializerMethod,
+        ITypeSymbol typeSymbol)
     {
         Name = name;
         TypeName = typeName;
         Namespace = @namespace;
         XmlNameValue = xmlNameValue;
         Summary = summary;
+        GetterAccessibility = getterAccessibility;
+        SetterAccessibility = setterAccessibility;
+        CustomSerializerMethod = customSerializerMethod;
+        CustomDeserializerMethod = customDeserializerMethod;
         TypeSymbol = typeSymbol;
     }
+
 }
