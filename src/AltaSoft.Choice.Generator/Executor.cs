@@ -195,8 +195,6 @@ internal static class Executor
 
         sb.AppendSummary("<para>Choice enumeration</para>");
 
-        sb.AppendLine("[Serializable]");
-
         sb.AppendLine("public enum ChoiceOf")
             .OpenBracket();
 
