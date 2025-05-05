@@ -27,7 +27,7 @@ public sealed partial class Authorisation1Choice
     /// <returns></returns>
     private static Authorisation1Code StringToCode(string value) => Enum.Parse<Authorisation1Code>(value);
     /// <summary>
-    /// Custom method to serialzie enum to XML
+    /// Custom method to serialize enum to XML
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>

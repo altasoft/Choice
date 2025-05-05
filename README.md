@@ -320,7 +320,7 @@ Authosiration1Choice choice = Authorisation1Code.FileLevelAuthorisationSummary;
 
 ## Advanced Usage
 ### XML Serialization
-By default XmlSerialzier is created for all property types however, for enum types you can use Custom methods that will be used to serialize and deserialize xml
+By default XmlSerializer is created for all property types however, for enum types you can use Custom methods that will be used to serialize and deserialize xml
 ```csharp
 [Choice]
 public sealed partial class Authorisation1Choice
@@ -343,7 +343,7 @@ public sealed partial class Authorisation1Choice
     /// </summary>
     private static Authorisation1Code StringToCode(string value) => Enum.Parse<Authorisation1Code>(value);
     /// <summary>
-    /// Custom method to serialzie enum to XML
+    /// Custom method to serialize enum to XML
     /// </summary>
     private static string CodeToString(Authorisation1Code value) => value.ToString();
 
