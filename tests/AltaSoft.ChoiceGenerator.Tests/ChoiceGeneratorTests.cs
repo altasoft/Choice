@@ -62,6 +62,20 @@ public class ChoiceGeneratorTests
         Assert.Null(value.Proprietary);
         Assert.Equal(Authorisation1Choice.ChoiceOf.Code, value.ChoiceType);
 
+        var settings = new XmlWriterSettings
+        {
+            OmitXmlDeclaration = true, // 👈 removes the XML declaration
+            Indent = true              // optional: nicely formats the output
+        };
+        // Serialize back to XML
+        using var sw = new StringWriter();
+        using var writer = XmlWriter.Create(sw, settings);
+
+        serializer.Serialize(writer, value, XmlNamespaceHelper.EmptyNamespace);
+
+        var serializedXml = sw.ToString();
+        Assert.Contains("<Cd>Two</Cd>", serializedXml);
+
     }
 
     [Fact]
