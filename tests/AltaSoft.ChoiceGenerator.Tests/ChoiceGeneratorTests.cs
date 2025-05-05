@@ -75,6 +75,7 @@ public class ChoiceGeneratorTests
 
         var serializedXml = sw.ToString();
         Assert.Contains("<Cd>Two</Cd>", serializedXml);
+        Assert.DoesNotContain("<Other", serializedXml);
 
     }
 
