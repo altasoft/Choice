@@ -23,10 +23,13 @@
 		</PackageReference>
 	</ItemGroup>
 
+  <ItemGroup>
+	  <PackageReference Include="Microsoft.XmlSerializer.Generator" Version="9.0.4" PrivateAssets="all" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\AltaSoft.Choice.Generator\AltaSoft.Choice.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" ExcludeAssets="runtime" />
 		<ProjectReference Include="..\..\src\AltaSoft.Choice\AltaSoft.Choice.csproj" />
-
 	</ItemGroup>
 
 

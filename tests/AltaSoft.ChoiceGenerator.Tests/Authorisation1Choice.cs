@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 using AltaSoft.Choice;
 
 namespace AltaSoft.ChoiceGenerator.Tests;
 
-[Choice]
+//[Choice]
+
 public sealed partial class Authorisation1Choice
 {
     /// <summary>
@@ -35,10 +39,15 @@ public sealed partial class Authorisation1Choice
 
 }
 
-public class Proprietary
+public class Proprietary : IXmlSerializable
 {
     public string Other { get; set; }
 
+    public XmlSchema? GetSchema() => throw new NotImplementedException();
+
+    public void ReadXml(XmlReader reader) => throw new NotImplementedException();
+
+    public void WriteXml(XmlWriter writer) => throw new NotImplementedException();
 }
 
 public enum Authorisation1Code
