@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -11,13 +12,51 @@ namespace AltaSoft.Choice.Generator.Extensions;
 /// </summary>
 internal static class CompilationExt
 {
+    internal static string ToFieldName(this string s)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+            return s;
+
+        if (s.Length == 1)
+            return "_" + s.ToLower(CultureInfo.InvariantCulture);
+
+        return "_" + char.ToLower(s[0], CultureInfo.InvariantCulture) + s.Substring(1);
+    }
+
+    /// <summary>
+    /// Returns the C# keyword representation of a property's <see cref="Accessibility"/> level,
+    /// optionally omitting the keyword for <c>public</c> if <paramref name="emptyOnPublic"/> is true.
+    /// </summary>
+    /// <param name="accessibility">The <see cref="Accessibility"/> enum value representing the access level.</param>
+    /// <param name="emptyOnPublic">
+    /// If true, returns an empty string when <paramref name="accessibility"/> is <c>Public</c>;
+    /// otherwise, returns the string <c>"public"</c>.
+    /// </param>
+    /// <returns>
+    /// A string representing the C# access modifier, such as <c>"private"</c>, <c>"protected internal"</c>,
+    /// or an empty string if <paramref name="accessibility"/> is <c>NotApplicable</c> or <c>Public</c> with <paramref name="emptyOnPublic"/> set to true.
+    /// </returns>
+    internal static string GetPropertyAccessibilityString(this Accessibility accessibility, bool emptyOnPublic = true)
+    {
+        return accessibility switch
+        {
+            Accessibility.NotApplicable => "",
+            Accessibility.Public => emptyOnPublic ? "" : "public ",
+            Accessibility.Private => "private ",
+            Accessibility.Protected => "protected ",
+            Accessibility.Internal => "internal ",
+            Accessibility.ProtectedAndInternal => "private protected ",
+            Accessibility.ProtectedOrInternal => "protected internal ",
+            _ => ""
+        };
+    }
+
     /// <summary>
     /// Reads Summary of a symbol from its XML documentation comment.
     /// </summary>
     /// <param name="symbol"></param>
-    /// <param name="compilation"></param>
     /// <returns></returns>
-    internal static string? GetSummaryText(this ISymbol symbol, Compilation compilation)
+    internal static string? GetSummaryText(this ISymbol symbol)
     {
         // Try to get the XML documentation comment
         var xmlText = symbol.GetDocumentationCommentXml();
@@ -28,7 +67,7 @@ internal static class CompilationExt
         try
         {
             var xmlDoc = System.Xml.Linq.XDocument.Parse(xmlText);
-            var summary = xmlDoc.Root?.Element("summary")?.Value?.Trim();
+            var summary = xmlDoc.Root?.Element("summary")?.Value.Trim();
             return summary;
         }
         catch
@@ -66,8 +105,6 @@ internal static class CompilationExt
             if (syntax.GetSyntax() is TypeDeclarationSyntax typeDeclaration && string.Equals(typeDeclaration.GetClassName(), self.GetClassNameWithArguments(), StringComparison.Ordinal))
             {
                 var modifiers = typeDeclaration.Modifiers.ToString();
-                if (typeDeclaration is RecordDeclarationSyntax)
-                    modifiers += " record";
 
                 return modifiers;
             }

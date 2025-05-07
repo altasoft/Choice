@@ -28,8 +28,6 @@ public sealed class ChoiceGenerator : IIncrementalGenerator
 
         var assemblyNames = context.CompilationProvider.Select((c, _) => c);
 
-        //var globalOptions = context.AnalyzerConfigOptionsProvider.Select((c, _) => GetGlobalOptions(c));
-
         var allData = choicesToGenerate.Collect().Combine(assemblyNames);
 
         context.RegisterSourceOutput(allData, static (spc, pair) => Executor.Execute(in pair.Left, in pair.Right, in spc));

@@ -9,87 +9,83 @@
 #nullable enable
 
 using TestNamespace;
+using AltaSoft.Choice;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Xml;
 using System.Xml.Serialization;
-
+using System.Xml.Schema;
 
 namespace TestNamespace;
 
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+#pragma warning disable CS0628 // New protected member declared in sealed type
+
 public sealed partial class Authorisation1Choice
 {
-
-    /// <summary>
-    /// <para> Choice element. One of: <list type="bullet"/> <para><item><term>Cd</term></item><description>Code <see cref = "TestNamespace.Authorisation1Code"/></description> - Specifies the authorisation, in a coded form.  </para><para><item><term>Prtry</term></item><description>Proprietary <see cref = "string"/></description> - Specifies the authorisation, in a free text form.  </para> </para>
-    /// </summary>
-    [XmlElement("Cd", typeof(TestNamespace.Authorisation1Code))]
-    [XmlElement("Prtry", typeof(string))]
-    [XmlChoiceIdentifier(nameof(ChoiceType))]
-    [JsonIgnore]
     [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-    public object Item { get; set; } = default!;
+    public Authorisation1Choice()
+    {
+    }
 
     /// <summary>
     /// <para>Choice enum </para>
     /// </summary>
-    [XmlIgnore]
     [JsonIgnore]
-    public ChoiceOf ChoiceType { get; set; }
+    [XmlIgnore]
+    public ChoiceOf ChoiceType { get; private set; }
+
+    private TestNamespace.Authorisation1Code? _code;
 
     /// <summary>
     /// Specifies the authorisation, in a coded form.
     /// </summary>
-    [XmlIgnore]
-    [JsonInclude]
-    public partial TestNamespace.Authorisation1Code? Code { get => ChoiceType == ChoiceOf.Code ? GetAsCode() : (TestNamespace.Authorisation1Code?)null; set => SetAsCode(value ?? throw new JsonException("Choice value cannot be null")); }
+    [DisallowNull]
+    [XmlElement("Code")]
+    public partial TestNamespace.Authorisation1Code? Code
+    {
+        get => _code;
+        set
+        {
+            _code = value ?? throw new InvalidOperationException("Choice value cannot be null");
+            _proprietary = null;
+            ChoiceType = ChoiceOf.Code;
+        }
+    }
+
+    private string? _proprietary;
 
     /// <summary>
     /// Specifies the authorisation, in a free text form.
     /// </summary>
-    [XmlIgnore]
-    [JsonInclude]
-    public partial string? Proprietary { get => ChoiceType == ChoiceOf.Proprietary ? GetAsProprietary() : (string?)null; set => SetAsProprietary(value ?? throw new JsonException("Choice value cannot be null")); }
-
-
-    private TestNamespace.Authorisation1Code GetAsCode() => (TestNamespace.Authorisation1Code)Item;
-
-    private void SetAsCode(TestNamespace.Authorisation1Code value)
+    [DisallowNull]
+    [XmlElement("Proprietary")]
+    public partial string? Proprietary
     {
-        Item = value;
-        ChoiceType = ChoiceOf.Code;
+        get => _proprietary;
+        set
+        {
+            _proprietary = value ?? throw new InvalidOperationException("Choice value cannot be null");
+            _code = null;
+            ChoiceType = ChoiceOf.Proprietary;
+        }
     }
+
 
     /// <summary>
     /// Creates a new <see cref="TestNamespace.Authorisation1Choice"/> instance and sets its value using the specified <see cref="TestNamespace.Authorisation1Code"/>.
     /// </summary>
     /// <param name="value">The value to assign to the created choice instance.</param>
-    public static TestNamespace.Authorisation1Choice CreateAsCode(TestNamespace.Authorisation1Code value)
-    {
-        var instance = new TestNamespace.Authorisation1Choice();
-        instance.SetAsCode(value);
-        return instance;
-    }
-
-    private string GetAsProprietary() => (string)Item;
-
-    private void SetAsProprietary(string value)
-    {
-        Item = value;
-        ChoiceType = ChoiceOf.Proprietary;
-    }
+    public static TestNamespace.Authorisation1Choice CreateAsCode(TestNamespace.Authorisation1Code value) => new () { Code = value };
 
     /// <summary>
     /// Creates a new <see cref="TestNamespace.Authorisation1Choice"/> instance and sets its value using the specified <see cref="string"/>.
     /// </summary>
     /// <param name="value">The value to assign to the created choice instance.</param>
-    public static TestNamespace.Authorisation1Choice CreateAsProprietary(string value)
-    {
-        var instance = new TestNamespace.Authorisation1Choice();
-        instance.SetAsProprietary(value);
-        return instance;
-    }
+    public static TestNamespace.Authorisation1Choice CreateAsProprietary(string value) => new () { Proprietary = value };
 
     /// <summary>
     /// <para>Applies the appropriate function based on the current choice type</para>
@@ -101,13 +97,12 @@ public sealed partial class Authorisation1Choice
     	Func<TestNamespace.Authorisation1Code, TResult> matchCode, 
     	Func<string, TResult> matchProprietary)
     {
-        if(ChoiceType == ChoiceOf.Code)
-        	return matchCode(Code!.Value);
-
-        if(ChoiceType == ChoiceOf.Proprietary)
-        	return matchProprietary(Proprietary!);
-
-        throw new InvalidOperationException($"Invalid code ChoiceType. '{ChoiceType}'");
+        return ChoiceType switch
+        {
+            ChoiceOf.Code => matchCode(Code!.Value),
+            ChoiceOf.Proprietary => matchProprietary(Proprietary!),
+            _ => throw new InvalidOperationException($"Invalid ChoiceType. '{ChoiceType}'")
+        };
     }
 
     /// <summary>
@@ -119,37 +114,52 @@ public sealed partial class Authorisation1Choice
     	Action<TestNamespace.Authorisation1Code> matchCode, 
     	Action<string> matchProprietary)
     {
-        if(ChoiceType == ChoiceOf.Code!)
+        switch (ChoiceType)
         {
-            matchCode(Code!.Value);
-            return;
-        }
+            case ChoiceOf.Code:
+                matchCode(Code!.Value);
+                return;
 
-        if(ChoiceType == ChoiceOf.Proprietary!)
-        {
-            matchProprietary(Proprietary!);
-            return;
-        }
+            case ChoiceOf.Proprietary:
+                matchProprietary(Proprietary!);
+                return;
 
-        throw new InvalidOperationException($"Invalid code ChoiceType. '{ChoiceType}'");
+            default:
+            throw new XmlException($"Invalid ChoiceType. '{ChoiceType}'");
+        }
     }
+
+    /// <summary>
+    /// Implicitly converts an <see cref="TestNamespace.Authorisation1Code"/> to an <see cref="Authorisation1Choice"/>.
+    /// </summary>
+    /// <param name="value">The <see cref="TestNamespace.Authorisation1Code"/> to convert.</param>
+    /// <returns>
+    /// <see cref="Authorisation1Choice"/> instance representing the code.
+    /// </returns>
+    public static implicit operator Authorisation1Choice(TestNamespace.Authorisation1Code value) => CreateAsCode(value);
+
+    /// <summary>
+    /// Implicitly converts an <see cref="string"/> to an <see cref="Authorisation1Choice"/>.
+    /// </summary>
+    /// <param name="value">The <see cref="string"/> to convert.</param>
+    /// <returns>
+    /// <see cref="Authorisation1Choice"/> instance representing the code.
+    /// </returns>
+    public static implicit operator Authorisation1Choice(string value) => CreateAsProprietary(value);
 
     /// <summary>
     /// <para>Choice enumeration</para>
     /// </summary>
-    [Serializable]
-    [XmlType("Authorisation1Choice__ChoiceOf")]
+    [XmlType("ChoiceOf.Authorisation1Choice")]
     public enum ChoiceOf
     {
         /// <summary>
         /// Specifies the authorisation, in a coded form.
         /// </summary>
-        [XmlEnum("Cd")]
         Code, 
         /// <summary>
         /// Specifies the authorisation, in a free text form.
         /// </summary>
-        [XmlEnum("Prtry")]
         Proprietary, 
     }
 }

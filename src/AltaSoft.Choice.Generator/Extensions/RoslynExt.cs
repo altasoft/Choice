@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 // https://www.meziantou.net/working-with-types-in-a-roslyn-analyzer.htm
 
@@ -12,61 +9,61 @@ namespace AltaSoft.Choice.Generator.Extensions;
 /// </summary>
 internal static class RoslynExt
 {
-    /// <summary>
-    /// Gets the location of the attribute data within the source code.
-    /// </summary>
-    /// <param name="self">The attribute data to retrieve the location for.</param>
-    /// <returns>The location of the attribute data in the source code, or null if not found.</returns>
-    public static Location? GetAttributeLocation(this AttributeData self)
-    {
-        var syntaxReference = self.ApplicationSyntaxReference;
+    ///// <summary>
+    ///// Gets the location of the attribute data within the source code.
+    ///// </summary>
+    ///// <param name="self">The attribute data to retrieve the location for.</param>
+    ///// <returns>The location of the attribute data in the source code, or null if not found.</returns>
+    //public static Location? GetAttributeLocation(this AttributeData self)
+    //{
+    //    var syntaxReference = self.ApplicationSyntaxReference;
 
-        var syntax = (AttributeSyntax?)syntaxReference?.GetSyntax();
+    //    var syntax = (AttributeSyntax?)syntaxReference?.GetSyntax();
 
-        return syntax?.GetLocation();
-    }
+    //    return syntax?.GetLocation();
+    //}
 
-    /// <summary>
-    /// Checks if the symbol has a default constructor (parameterless constructor) defined and retrieves its location.
-    /// </summary>
-    /// <param name="self">The symbol to check for a default constructor.</param>
-    /// <param name="location">When this method returns, contains the location of the default constructor, if found; otherwise, null.</param>
-    /// <returns>True if a default constructor is found; otherwise, false.</returns>
-    public static bool HasDefaultConstructor(this ISymbol? self, out Location? location)
-    {
-        var constructors = self.GetConstructorsFromSyntaxTree();
+    ///// <summary>
+    ///// Checks if the symbol has a default constructor (parameterless constructor) defined and retrieves its location.
+    ///// </summary>
+    ///// <param name="self">The symbol to check for a default constructor.</param>
+    ///// <param name="location">When this method returns, contains the location of the default constructor, if found; otherwise, null.</param>
+    ///// <returns>True if a default constructor is found; otherwise, false.</returns>
+    //public static bool HasDefaultConstructor(this ISymbol? self, out Location? location)
+    //{
+    //    var constructors = self.GetConstructorsFromSyntaxTree();
 
-        var ctor = constructors?.Find(x => x.ParameterList.Parameters.Count == 0);
-        location = ctor?.GetLocation();
-        return ctor is not null;
-    }
+    //    var ctor = constructors?.Find(x => x.ParameterList.Parameters.Count == 0);
+    //    location = ctor?.GetLocation();
+    //    return ctor is not null;
+    //}
 
-    /// <summary>
-    /// Retrieves a list of constructor declarations associated with the symbol from the syntax tree.
-    /// </summary>
-    /// <param name="self">The symbol for which to retrieve constructor declarations.</param>
-    /// <returns>A list of constructor declarations or null if none are found.</returns>
-    public static List<ConstructorDeclarationSyntax>? GetConstructorsFromSyntaxTree(this ISymbol? self)
-    {
-        var declaringSyntaxReferences = self?.DeclaringSyntaxReferences;
+    ///// <summary>
+    ///// Retrieves a list of constructor declarations associated with the symbol from the syntax tree.
+    ///// </summary>
+    ///// <param name="self">The symbol for which to retrieve constructor declarations.</param>
+    ///// <returns>A list of constructor declarations or null if none are found.</returns>
+    //public static List<ConstructorDeclarationSyntax>? GetConstructorsFromSyntaxTree(this ISymbol? self)
+    //{
+    //    var declaringSyntaxReferences = self?.DeclaringSyntaxReferences;
 
-        if (self is null || declaringSyntaxReferences is null or { Length: 0 })
-            return null;
+    //    if (self is null || declaringSyntaxReferences is null or { Length: 0 })
+    //        return null;
 
-        List<ConstructorDeclarationSyntax>? result = null;
+    //    List<ConstructorDeclarationSyntax>? result = null;
 
-        foreach (var syntax in declaringSyntaxReferences)
-        {
-            if (syntax.GetSyntax() is TypeDeclarationSyntax classDeclaration && string.Equals(classDeclaration.GetClassFullName(), self.ToString(), System.StringComparison.Ordinal))
-            {
-                var constructors = classDeclaration.Members.OfType<ConstructorDeclarationSyntax>();
+    //    foreach (var syntax in declaringSyntaxReferences)
+    //    {
+    //        if (syntax.GetSyntax() is TypeDeclarationSyntax classDeclaration && string.Equals(classDeclaration.GetClassFullName(), self.ToString(), System.StringComparison.Ordinal))
+    //        {
+    //            var constructors = classDeclaration.Members.OfType<ConstructorDeclarationSyntax>();
 
-                result ??= [];
-                result.AddRange(constructors);
-            }
-        }
-        return result;
-    }
+    //            result ??= [];
+    //            result.AddRange(constructors);
+    //        }
+    //    }
+    //    return result;
+    //}
 
     /// <summary>
     /// Gets the namespace of the specified type declaration syntax.
@@ -85,15 +82,15 @@ internal static class RoslynExt
     /// <returns>The namespace from the base namespace declaration.</returns>
     public static string GetNamespace(this BaseNamespaceDeclarationSyntax self) => self.Name.ToString();
 
-    /// <summary>
-    /// Gets the fully qualified name of the specified type declaration syntax, including its namespace.
-    /// </summary>
-    /// <param name="self">The type declaration syntax to retrieve the fully qualified name from.</param>
-    /// <returns>The fully qualified name of the type declaration.</returns>
-    public static string GetClassFullName(this TypeDeclarationSyntax self)
-    {
-        return self.GetNamespace() + "." + self.GetClassName();
-    }
+    ///// <summary>
+    ///// Gets the fully qualified name of the specified type declaration syntax, including its namespace.
+    ///// </summary>
+    ///// <param name="self">The type declaration syntax to retrieve the fully qualified name from.</param>
+    ///// <returns>The fully qualified name of the type declaration.</returns>
+    //public static string GetClassFullName(this TypeDeclarationSyntax self)
+    //{
+    //    return self.GetNamespace() + "." + self.GetClassName();
+    //}
 
     /// <summary>
     /// Gets the name of the class specified in the type declaration syntax.

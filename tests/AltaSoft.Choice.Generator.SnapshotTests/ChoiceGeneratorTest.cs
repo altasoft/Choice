@@ -16,45 +16,91 @@ public class ChoiceGeneratorTest
 {
 
     [Fact]
-    public Task DomainPrimitiveWithoutTypeConverters_ShouldNotAddJsonConverter()
+    public Task ChoiceTypeShouldGenerateAllMethodsAndCompileCorrectly()
     {
-        const string source = """
-                              using System;
-                              using System.Xml;
-                              using System.Xml.Schema;
-                              using System.Xml.Serialization;
-                              using AltaSoft.Choice;
+        const string source =
+            """
+            using System;
+            using System.Xml;
+            using System.Xml.Schema;
+            using System.Xml.Serialization;
+            using AltaSoft.Choice;
                               
-                              namespace TestNamespace;
+            namespace TestNamespace;
                               
-                              [Choice]
-                              public sealed partial class Authorisation1Choice
-                              {
+            [Choice]
+            public sealed partial class Authorisation1Choice
+            {
                               
-                                  /// <summary>
-                                  /// <para>Specifies the authorisation, in a coded form.</para>
-                                  /// </summary>
-                                  [XmlElement("Cd")]
+                /// <summary>
+                /// <para>Specifies the authorisation, in a coded form.</para>
+                /// </summary>
+                [XmlElement("Cd")]
                                  
-                                  public partial Authorisation1Code? Code { get; set; }
+                public partial Authorisation1Code? Code { get; set; }
                                    
-                                  /// <summary>
-                                  /// <para>Specifies the authorisation, in a free text form.</para>
-                                  /// </summary>
-                                  [XmlElement("Prtry")]
+                /// <summary>
+                /// <para>Specifies the authorisation, in a free text form.</para>
+                /// </summary>
+                [XmlElement("Prtry")]
                                  
-                                  public partial string? Proprietary { get; set; }
+                public partial string? Proprietary { get; set; }
                               
-                              }
+            }
                               
-                              public enum Authorisation1Code{}
-                              """;
+            public enum Authorisation1Code
+            {
+                One,
+                Two
+            }
+            """;
 
         return TestHelper.Verify(source, (_, x, _) =>
         {
             Assert.Single(x);
         });
     }
+
+    [Fact]
+    public Task ChoiceTypeShouldNotGenerateImplicitMethodsAndCompileCorrectly()
+    {
+        const string source =
+            """
+            using System;
+            using System.Xml;
+            using System.Xml.Schema;
+            using System.Xml.Serialization;
+            using AltaSoft.Choice;
+                              
+            namespace TestNamespace;
+                              
+            [Choice]
+            public sealed partial class Authorisation1Choice
+            {
+                              
+                /// <summary>
+                /// <para>Specifies the authorisation, in a coded form.</para>
+                /// </summary>
+                [XmlElement("Cd")]
+                                 
+                public partial string? Code { get; set; }
+                                   
+                /// <summary>
+                /// <para>Specifies the authorisation, in a free text form.</para>
+                /// </summary>
+                [XmlElement("Prtry")]
+                                 
+                public partial string? Proprietary { get; set; }
+                              
+            }
+            """;
+
+        return TestHelper.Verify(source, (_, x, _) =>
+        {
+            Assert.Single(x);
+        });
+    }
+
     public static class TestHelper
     {
         internal static Task Verify(string source, Action<ImmutableArray<Diagnostic>, List<string>, GeneratorDriver>? additionalChecks = null)
