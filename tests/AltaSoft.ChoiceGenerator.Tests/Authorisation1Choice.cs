@@ -23,7 +23,7 @@ public sealed partial record Authorisation1Choice
 
 public class Proprietary
 {
-    public string Other { get; set; }
+    public string Other { get; set; } = null!;
 
 }
 

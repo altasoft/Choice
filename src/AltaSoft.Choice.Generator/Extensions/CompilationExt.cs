@@ -105,8 +105,6 @@ internal static class CompilationExt
             if (syntax.GetSyntax() is TypeDeclarationSyntax typeDeclaration && string.Equals(typeDeclaration.GetClassName(), self.GetClassNameWithArguments(), StringComparison.Ordinal))
             {
                 var modifiers = typeDeclaration.Modifiers.ToString();
-                //if (typeDeclaration is RecordDeclarationSyntax)
-                //    modifiers += " record";
 
                 return modifiers;
             }
