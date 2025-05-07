@@ -39,9 +39,6 @@ internal sealed class PropertyDetails
     /// </summary>
     internal Accessibility SetterAccessibility { get; private set; }
 
-    internal string? CustomSerializerMethod { get; private set; }
-    internal string? CustomDeserializerMethod { get; private set; }
-
     /// <summary>
     /// The type symbol of the property.
     /// </summary>
@@ -57,8 +54,6 @@ internal sealed class PropertyDetails
     /// <param name="summary">The summary documentation for the property.</param>
     /// <param name="getterAccessibility">The access modifiers for the property's getter.</param>
     /// <param name="setterAccessibility">The access modifiers for the property's setter.</param>
-    /// <param name="customSerializerMethod">custom serializer method used for enums</param>
-    /// <param name="customDeserializerMethod">custom deserializer method used for enums</param>
     /// <param name="typeSymbol">The type symbol of the property.</param>
     public PropertyDetails(
         string name,
@@ -68,8 +63,6 @@ internal sealed class PropertyDetails
         string? summary,
         Accessibility getterAccessibility,
         Accessibility setterAccessibility,
-        string? customSerializerMethod,
-        string? customDeserializerMethod,
         ITypeSymbol typeSymbol)
     {
         Name = name;
@@ -79,8 +72,6 @@ internal sealed class PropertyDetails
         Summary = summary;
         GetterAccessibility = getterAccessibility;
         SetterAccessibility = setterAccessibility;
-        CustomSerializerMethod = customSerializerMethod;
-        CustomDeserializerMethod = customDeserializerMethod;
         TypeSymbol = typeSymbol;
     }
 

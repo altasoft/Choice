@@ -1,11 +1,13 @@
-﻿namespace AltaSoft.ChoiceGenerator.Tests;
+﻿using AltaSoft.Choice;
 
-//[Choice]
+namespace AltaSoft.ChoiceGenerator.Tests;
 
-//public sealed partial class TwoSameTypeChoice
-//{
-//    public partial string? StringChoiceOne { get; set; }
+[Choice]
 
-//    public partial string? StringChoiceTwo { get; set; }
+public sealed partial class TwoSameTypeChoice
+{
+    public partial string? StringChoiceOne { get; set; }
 
-//}
+    public partial string? StringChoiceTwo { get; set; }
+
+}

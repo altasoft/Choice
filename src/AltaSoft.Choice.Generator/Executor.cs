@@ -55,46 +55,9 @@ internal static class Executor
         }
     }
 
-    private static PropertyDetails ProcessProperty(ITypeSymbol typeSymbol, IPropertySymbol propertySymbol)
-    {
-        var xmlTagAttribute = propertySymbol.GetAttributes().FirstOrDefault(x => x.AttributeClass?.ToDisplayString() == Constants.XmlTagAttributeFullName);
-        var xmlElementName = (string?)xmlTagAttribute?.ConstructorArguments[0].Value ?? propertySymbol.Name;
-
-        var typeFullName = propertySymbol.Type.GetFriendlyName();
-        var propertyName = propertySymbol.Name;
-
-        string? customSerializerMethod = null;
-        string? customDeserializerMethod = null;
-
-        var propType = propertySymbol.Type;
-        if (propType is INamedTypeSymbol { IsGenericType: true, ConstructedFrom.SpecialType: SpecialType.System_Nullable_T } namedType)
-        {
-            propType = namedType.TypeArguments[0];
-        }
-
-        if (propType.TypeKind is TypeKind.Enum)
-        {
-            var typeMethods = typeSymbol.GetMembersOfType<IMethodSymbol>().ToList();
-            customSerializerMethod = typeMethods.FirstOrDefault(x => x.Name == propertyName + "ToString")?.Name ?? null;
-            customDeserializerMethod = typeMethods.FirstOrDefault(x => x.Name == "StringTo" + propertyName)?.Name ?? null;
-        }
-
-        return new PropertyDetails(
-            name: propertyName,
-            typeName: typeFullName.Replace("?", ""),
-            @namespace: propertySymbol.ContainingNamespace.ToDisplayString(),
-            xmlNameValue: xmlElementName,
-            summary: propertySymbol.GetSummaryText(),
-            getterAccessibility: propertySymbol.GetMethod?.DeclaredAccessibility ?? Accessibility.NotApplicable,
-            setterAccessibility: propertySymbol.SetMethod?.DeclaredAccessibility ?? Accessibility.NotApplicable,
-            customSerializerMethod: customSerializerMethod,
-            customDeserializerMethod: customDeserializerMethod,
-            typeSymbol: propertySymbol.Type);
-    }
-
     private static SourceCodeBuilder Process(INamedTypeSymbol typeSymbol, List<IPropertySymbol> properties)
     {
-        var processedProperties = properties.ConvertAll(x => ProcessProperty(typeSymbol, x));
+        var processedProperties = properties.ConvertAll(ProcessProperty);
         var usingStatements = processedProperties.Select(x => x.Namespace).Concat(s_baseNamespaces);
         var sb = new SourceCodeBuilder();
 
@@ -106,16 +69,15 @@ internal static class Executor
             .AppendLine("#pragma warning disable CS0628 // New protected member declared in sealed type")
             .NewLine();
 
-        var inheritance = typeSymbol.Interfaces.Any(x => x.GetFullName() == Constants.IXmlSerializableFullName) ? null : "IXmlSerializable";
-        sb.AppendClass(typeSymbol.IsRecord, typeSymbol.GetModifiers() ?? "public partial", typeSymbol.Name, inheritance);
+        sb.AppendClass(typeSymbol.IsRecord, typeSymbol.GetModifiers() ?? "public partial", typeSymbol.Name);
 
-        var hasDefaultCtor = typeSymbol.Constructors.Any(x => x.Parameters.Length == 0);
+        var hasDefaultCtor = typeSymbol.Constructors.Any(x => x.Parameters.Length == 0 && !x.IsImplicitlyDeclared);
         if (!hasDefaultCtor)
         {
             var isSealedType = typeSymbol.IsSealed;
             if (isSealedType)
             {
-                sb.AppendLine("[Obsolete(\"Only for deserializer\", true)]");
+                sb.AppendLine("[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]");
             }
             sb.Append(isSealedType ? "public " : "protected ").Append(typeSymbol.Name).AppendLine("()")
                 .OpenBracket()
@@ -125,6 +87,7 @@ internal static class Executor
 
         sb.AppendSummary("<para>Choice enum </para>");
         sb.AppendLine("[JsonIgnore]");
+        sb.AppendLine("[XmlIgnore]");
         sb.AppendLine("public ChoiceOf ChoiceType { get; private set; }");
         sb.NewLine();
 
@@ -139,6 +102,7 @@ internal static class Executor
                 sb.AppendSummary(p.Summary);
 
             sb.AppendLine("[DisallowNull]");
+            sb.Append("[XmlElement(\"").Append(p.XmlNameValue).AppendLine("\")]");
             sb.Append("public partial ").Append(p.TypeName).Append("? ").Append(p.Name)
                 .OpenBracket();
 
@@ -154,13 +118,6 @@ internal static class Executor
             .CloseBracket();
 
             sb.NewLine();
-
-            if (p is not { CustomDeserializerMethod: not null, CustomSerializerMethod: not null })
-            {
-                sb.Append("private static readonly XmlSerializer s").Append(fieldName)
-                    .Append("Serializer = new (typeof(").Append(p.TypeName).Append("), ").Append($"new XmlRootAttribute(\"{p.XmlNameValue}\")").AppendLine(");");
-            }
-
         }
 
         sb.NewLine();
@@ -182,11 +139,7 @@ internal static class Executor
         ProcessMatch(sb, processedProperties);
 
         sb.NewLine();
-
         ProcessSwitch(sb, processedProperties);
-
-        sb.NewLine();
-        ProcessXmlSerialization(sb, typeSymbol, processedProperties);
 
         sb.NewLine();
 
@@ -195,6 +148,7 @@ internal static class Executor
 
         sb.AppendSummary("<para>Choice enumeration</para>");
 
+        sb.Append("[XmlType(\"ChoiceOf.").Append(typeSymbol.Name).AppendLine("\")]");
         sb.AppendLine("public enum ChoiceOf")
             .OpenBracket();
 
@@ -211,6 +165,25 @@ internal static class Executor
 
         return sb;
 
+    }
+
+    private static PropertyDetails ProcessProperty(IPropertySymbol propertySymbol)
+    {
+        var xmlTagAttribute = propertySymbol.GetAttributes().FirstOrDefault(x => x.AttributeClass?.ToDisplayString() == Constants.XmlTagAttributeFullName);
+        var xmlElementName = (string?)xmlTagAttribute?.ConstructorArguments[0].Value ?? propertySymbol.Name;
+
+        var typeFullName = propertySymbol.Type.GetFriendlyName();
+        var propertyName = propertySymbol.Name;
+
+        return new PropertyDetails(
+            name: propertyName,
+            typeName: typeFullName.Replace("?", ""),
+            @namespace: propertySymbol.ContainingNamespace.ToDisplayString(),
+            xmlNameValue: xmlElementName,
+            summary: propertySymbol.GetSummaryText(),
+            getterAccessibility: propertySymbol.GetMethod?.DeclaredAccessibility ?? Accessibility.NotApplicable,
+            setterAccessibility: propertySymbol.SetMethod?.DeclaredAccessibility ?? Accessibility.NotApplicable,
+            typeSymbol: propertySymbol.Type);
     }
 
     private static bool ProcessImplicitOperators(SourceCodeBuilder sb, string typeName, List<PropertyDetails> processedProperties)
@@ -230,115 +203,6 @@ internal static class Executor
         }
 
         return true;
-    }
-
-    private static void ProcessXmlSerialization(SourceCodeBuilder sb, ITypeSymbol type, List<PropertyDetails> processedProperties)
-    {
-        sb.AppendInheritDoc()
-            .AppendLine("public XmlSchema? GetSchema() => null;")
-            .NewLine();
-
-        //read
-        var xmlPropNames = string.Join(" or ", processedProperties.Select(x => $"<{x.XmlNameValue}>"));
-
-        sb.AppendInheritDoc()
-            .AppendLine("public void ReadXml(XmlReader reader)")
-            .OpenBracket()
-            .AppendLine("ArgumentNullException.ThrowIfNull(reader);")
-            .NewLine()
-            .AppendLine("reader.MoveToContent();")
-            .NewLine()
-            .AppendLine("if (reader.IsEmptyElement)")
-            .AppendLine($"\tthrow new XmlException(\"{type.Name} element must contain exactly one of {xmlPropNames}.\");")
-            .NewLine()
-            .AppendLine("reader.ReadStartElement();")
-            .NewLine()
-            .AppendLine("var sawChoice = false;")
-            .AppendLine("while (reader.MoveToContent() == XmlNodeType.Element)")
-            .OpenBracket()
-            .AppendLine("if (sawChoice)")
-            .AppendLine($"\tthrow new XmlException(\"{type.Name} must contain at most one of {xmlPropNames}.\");")
-            .NewLine()
-            .AppendLine("switch (reader.LocalName)")
-            .OpenBracket();
-
-        foreach (var prop in processedProperties)
-        {
-            sb.AppendSwitchCase($"\"{prop.XmlNameValue}\"")
-                .Append(prop.Name).Append(" = ");
-
-            if (prop.CustomDeserializerMethod is not null)
-            {
-                sb.Append(prop.CustomDeserializerMethod).AppendLine("(reader.ReadElementContentAsString());");
-            }
-            else
-            {
-                sb.Append("(").Append(prop.TypeName).Append(")(s")
-                    .Append(prop.Name.ToFieldName())
-                    .Append("Serializer.Deserialize(reader) ?? throw new XmlException(\" The value of ").Append(prop.XmlNameValue).AppendLine(" cannot be null\"));");
-            }
-
-            sb.AppendLine("sawChoice = true;")
-                .AppendLine("break;")
-                .CloseSwitchCase()
-                .NewLine();
-        }
-
-        sb.AppendDefaultSwitchCase()
-            .AppendLine("reader.Skip();")
-            .AppendLine("break;")
-            .CloseSwitchCase();
-
-        sb.CloseBracket();
-        sb.CloseBracket().NewLine();
-
-        sb.AppendLine("reader.ReadEndElement();")
-            .NewLine()
-            .AppendLine("if (!sawChoice)")
-            .AppendLine($"\tthrow new XmlException(\"{type.Name} must contain exactly one of {xmlPropNames}\");");
-
-        sb.CloseBracket();
-        sb.NewLine();
-
-        // write
-        sb.AppendInheritDoc()
-            .AppendLine("public void WriteXml(XmlWriter writer)")
-            .OpenBracket()
-            .AppendLine("ArgumentNullException.ThrowIfNull(writer);")
-            .NewLine()
-            .AppendLine("switch (ChoiceType)")
-            .OpenBracket();
-
-        foreach (var prop in processedProperties)
-        {
-            sb.AppendSwitchCase($"ChoiceOf.{prop.Name}");
-
-            if (prop.CustomSerializerMethod is not null)
-            {
-                sb.Append("writer.WriteStartElement(\"").Append(prop.XmlNameValue).AppendLine("\");");
-                sb.Append("writer.WriteString(").Append(prop.CustomSerializerMethod).Append($"({prop.Name}")
-                    .AppendIf(prop.TypeSymbol.IsValueType, "!.Value").AppendLine("));");
-                sb.AppendLine("writer.WriteEndElement();");
-            }
-            else
-            {
-                sb.Append("s").Append(prop.Name.ToFieldName()).Append("Serializer.Serialize(writer, ").Append(prop.Name)
-                    .AppendLine("!, XmlNamespaceHelper.EmptyNamespace);");
-            }
-
-            sb.AppendLine("break;")
-             .CloseSwitchCase()
-             .NewLine();
-
-        }
-
-        sb.AppendDefaultSwitchCase()
-            .AppendLine("throw new InvalidOperationException($\"Invalid ChoiceType. '{ChoiceType}'\");")
-            .CloseSwitchCase();
-
-        sb.CloseBracket();
-        sb.CloseBracket();
-
     }
 
     private static void ProcessMatch(SourceCodeBuilder sb, List<PropertyDetails> processedProperties)

@@ -41,12 +41,12 @@ internal static class CompilationExt
         return accessibility switch
         {
             Accessibility.NotApplicable => "",
-            Accessibility.Public => emptyOnPublic ? "" : "public",
-            Accessibility.Private => "private",
-            Accessibility.Protected => "protected",
-            Accessibility.Internal => "internal",
-            Accessibility.ProtectedAndInternal => "private protected",
-            Accessibility.ProtectedOrInternal => "protected internal",
+            Accessibility.Public => emptyOnPublic ? "" : "public ",
+            Accessibility.Private => "private ",
+            Accessibility.Protected => "protected ",
+            Accessibility.Internal => "internal ",
+            Accessibility.ProtectedAndInternal => "private protected ",
+            Accessibility.ProtectedOrInternal => "protected internal ",
             _ => ""
         };
     }
@@ -105,8 +105,8 @@ internal static class CompilationExt
             if (syntax.GetSyntax() is TypeDeclarationSyntax typeDeclaration && string.Equals(typeDeclaration.GetClassName(), self.GetClassNameWithArguments(), StringComparison.Ordinal))
             {
                 var modifiers = typeDeclaration.Modifiers.ToString();
-                if (typeDeclaration is RecordDeclarationSyntax)
-                    modifiers += " record";
+                //if (typeDeclaration is RecordDeclarationSyntax)
+                //    modifiers += " record";
 
                 return modifiers;
             }

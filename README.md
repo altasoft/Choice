@@ -91,12 +91,18 @@ namespace AltaSoft.ChoiceGenerator.Tests;
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
 #pragma warning disable CS0628 // New protected member declared in sealed type
 
-public sealed partial class Authorisation1Choice : IXmlSerializable
+public sealed partial record Authorisation1Choice
 {
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public Authorisation1Choice()
+    {
+    }
+
     /// <summary>
     /// <para>Choice enum </para>
     /// </summary>
     [JsonIgnore]
+    [XmlIgnore]
     public ChoiceOf ChoiceType { get; private set; }
 
     private AltaSoft.ChoiceGenerator.Tests.Authorisation1Code? _code;
@@ -105,6 +111,7 @@ public sealed partial class Authorisation1Choice : IXmlSerializable
     /// Specifies the authorisation, in a coded form.
     /// </summary>
     [DisallowNull]
+    [XmlElement("Cd")]
     public partial AltaSoft.ChoiceGenerator.Tests.Authorisation1Code? Code
     {
         get => _code;
@@ -116,13 +123,13 @@ public sealed partial class Authorisation1Choice : IXmlSerializable
         }
     }
 
-    private static readonly XmlSerializer s_codeSerializer = new (typeof(AltaSoft.ChoiceGenerator.Tests.Authorisation1Code), new XmlRootAttribute("Cd"));
     private Proprietary? _proprietary;
 
     /// <summary>
     /// Specifies the authorisation, in a free text form.
     /// </summary>
     [DisallowNull]
+    [XmlElement("Prtry")]
     public partial Proprietary? Proprietary
     {
         get => _proprietary;
@@ -134,7 +141,6 @@ public sealed partial class Authorisation1Choice : IXmlSerializable
         }
     }
 
-    private static readonly XmlSerializer s_proprietarySerializer = new (typeof(Proprietary), new XmlRootAttribute("Prtry"));
 
     /// <summary>
     /// Creates a new <see cref="AltaSoft.ChoiceGenerator.Tests.Authorisation1Choice"/> instance and sets its value using the specified <see cref="AltaSoft.ChoiceGenerator.Tests.Authorisation1Code"/>.
@@ -190,71 +196,6 @@ public sealed partial class Authorisation1Choice : IXmlSerializable
         }
     }
 
-    /// <inheritdoc/>
-    public XmlSchema? GetSchema() => null;
-
-    /// <inheritdoc/>
-    public void ReadXml(XmlReader reader)
-    {
-        ArgumentNullException.ThrowIfNull(reader);
-
-        reader.MoveToContent();
-
-        if (reader.IsEmptyElement)
-        	throw new XmlException("Authorisation1Choice element must contain exactly one of <Cd> or <Prtry>.");
-
-        reader.ReadStartElement();
-
-        var sawChoice = false;
-        while (reader.MoveToContent() == XmlNodeType.Element)
-        {
-            if (sawChoice)
-            	throw new XmlException("Authorisation1Choice must contain at most one of <Cd> or <Prtry>.");
-
-            switch (reader.LocalName)
-            {
-                case "Cd":
-                    Code = (AltaSoft.ChoiceGenerator.Tests.Authorisation1Code)(s_codeSerializer.Deserialize(reader) ?? throw new XmlException(" The value of Cd cannot be null"));
-                    sawChoice = true;
-                    break;
-
-                case "Prtry":
-                    Proprietary = (Proprietary)(s_proprietarySerializer.Deserialize(reader) ?? throw new XmlException(" The value of Prtry cannot be null"));
-                    sawChoice = true;
-                    break;
-
-                default:
-                    reader.Skip();
-                    break;
-            }
-        }
-
-        reader.ReadEndElement();
-
-        if (!sawChoice)
-        	throw new XmlException("Authorisation1Choice must contain exactly one of <Cd> or <Prtry>");
-    }
-
-    /// <inheritdoc/>
-    public void WriteXml(XmlWriter writer)
-    {
-        ArgumentNullException.ThrowIfNull(writer);
-
-        switch (ChoiceType)
-        {
-            case ChoiceOf.Code:
-                s_codeSerializer.Serialize(writer, Code!, XmlNamespaceHelper.EmptyNamespace);
-                break;
-
-            case ChoiceOf.Proprietary:
-                s_proprietarySerializer.Serialize(writer, Proprietary!, XmlNamespaceHelper.EmptyNamespace);
-                break;
-
-            default:
-                throw new InvalidOperationException($"Invalid ChoiceType. '{ChoiceType}'");
-        }
-    }
-
     /// <summary>
     /// Implicitly converts an <see cref="AltaSoft.ChoiceGenerator.Tests.Authorisation1Code"/> to an <see cref="Authorisation1Choice"/>.
     /// </summary>
@@ -276,7 +217,7 @@ public sealed partial class Authorisation1Choice : IXmlSerializable
     /// <summary>
     /// <para>Choice enumeration</para>
     /// </summary>
-    [Serializable]
+    [XmlType("ChoiceOf.Authorisation1Choice")]
     public enum ChoiceOf
     {
         /// <summary>
@@ -318,38 +259,7 @@ if property types are distinct implicit operators are generated
 Authosiration1Choice choice = Authorisation1Code.FileLevelAuthorisationSummary;
 ```
 
-## Advanced Usage
-### XML Serialization
-By default XmlSerializer is created for all property types however, for enum types you can use Custom methods that will be used to serialize and deserialize xml
-```csharp
-[Choice]
-public sealed partial class Authorisation1Choice
-{
-    /// <summary>
-    /// <para>Specifies the authorisation, in a coded form.</para>
-    /// </summary>
-    [XmlTag("Cd")]
-    [JsonPropertyName("cd")]
-    public partial Authorisation1Code? Code { get; set; }
 
-    /// <summary>
-    /// <para>Specifies the authorisation, in a free text form.</para>
-    /// </summary>
-    [XmlTag("Prtry")]
-    public partial Proprietary? Proprietary { get; set; }
-
-    /// <summary>
-    /// Custom method to Deserialize enums from XML 
-    /// </summary>
-    private static Authorisation1Code StringToCode(string value) => Enum.Parse<Authorisation1Code>(value);
-    /// <summary>
-    /// Custom method to serialize enum to XML
-    /// </summary>
-    private static string CodeToString(Authorisation1Code value) => value.ToString();
-
-}
-```
----
 
 ## 📦 Projects
 

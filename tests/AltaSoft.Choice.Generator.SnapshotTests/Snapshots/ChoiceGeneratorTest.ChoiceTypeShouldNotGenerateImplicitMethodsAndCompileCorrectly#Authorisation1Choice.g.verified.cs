@@ -24,12 +24,18 @@ namespace TestNamespace;
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
 #pragma warning disable CS0628 // New protected member declared in sealed type
 
-public sealed partial class Authorisation1Choice : IXmlSerializable
+public sealed partial class Authorisation1Choice
 {
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public Authorisation1Choice()
+    {
+    }
+
     /// <summary>
     /// <para>Choice enum </para>
     /// </summary>
     [JsonIgnore]
+    [XmlIgnore]
     public ChoiceOf ChoiceType { get; private set; }
 
     private string? _code;
@@ -38,6 +44,7 @@ public sealed partial class Authorisation1Choice : IXmlSerializable
     /// Specifies the authorisation, in a coded form.
     /// </summary>
     [DisallowNull]
+    [XmlElement("Code")]
     public partial string? Code
     {
         get => _code;
@@ -49,13 +56,13 @@ public sealed partial class Authorisation1Choice : IXmlSerializable
         }
     }
 
-    private static readonly XmlSerializer s_codeSerializer = new (typeof(string), new XmlRootAttribute("Code"));
     private string? _proprietary;
 
     /// <summary>
     /// Specifies the authorisation, in a free text form.
     /// </summary>
     [DisallowNull]
+    [XmlElement("Proprietary")]
     public partial string? Proprietary
     {
         get => _proprietary;
@@ -67,7 +74,6 @@ public sealed partial class Authorisation1Choice : IXmlSerializable
         }
     }
 
-    private static readonly XmlSerializer s_proprietarySerializer = new (typeof(string), new XmlRootAttribute("Proprietary"));
 
     /// <summary>
     /// Creates a new <see cref="TestNamespace.Authorisation1Choice"/> instance and sets its value using the specified <see cref="string"/>.
@@ -123,76 +129,11 @@ public sealed partial class Authorisation1Choice : IXmlSerializable
         }
     }
 
-    /// <inheritdoc/>
-    public XmlSchema? GetSchema() => null;
-
-    /// <inheritdoc/>
-    public void ReadXml(XmlReader reader)
-    {
-        ArgumentNullException.ThrowIfNull(reader);
-
-        reader.MoveToContent();
-
-        if (reader.IsEmptyElement)
-        	throw new XmlException("Authorisation1Choice element must contain exactly one of <Code> or <Proprietary>.");
-
-        reader.ReadStartElement();
-
-        var sawChoice = false;
-        while (reader.MoveToContent() == XmlNodeType.Element)
-        {
-            if (sawChoice)
-            	throw new XmlException("Authorisation1Choice must contain at most one of <Code> or <Proprietary>.");
-
-            switch (reader.LocalName)
-            {
-                case "Code":
-                    Code = (string)(s_codeSerializer.Deserialize(reader) ?? throw new XmlException(" The value of Code cannot be null"));
-                    sawChoice = true;
-                    break;
-
-                case "Proprietary":
-                    Proprietary = (string)(s_proprietarySerializer.Deserialize(reader) ?? throw new XmlException(" The value of Proprietary cannot be null"));
-                    sawChoice = true;
-                    break;
-
-                default:
-                    reader.Skip();
-                    break;
-            }
-        }
-
-        reader.ReadEndElement();
-
-        if (!sawChoice)
-        	throw new XmlException("Authorisation1Choice must contain exactly one of <Code> or <Proprietary>");
-    }
-
-    /// <inheritdoc/>
-    public void WriteXml(XmlWriter writer)
-    {
-        ArgumentNullException.ThrowIfNull(writer);
-
-        switch (ChoiceType)
-        {
-            case ChoiceOf.Code:
-                s_codeSerializer.Serialize(writer, Code!, XmlNamespaceHelper.EmptyNamespace);
-                break;
-
-            case ChoiceOf.Proprietary:
-                s_proprietarySerializer.Serialize(writer, Proprietary!, XmlNamespaceHelper.EmptyNamespace);
-                break;
-
-            default:
-                throw new InvalidOperationException($"Invalid ChoiceType. '{ChoiceType}'");
-        }
-    }
-
 
     /// <summary>
     /// <para>Choice enumeration</para>
     /// </summary>
-    [Serializable]
+    [XmlType("ChoiceOf.Authorisation1Choice")]
     public enum ChoiceOf
     {
         /// <summary>
