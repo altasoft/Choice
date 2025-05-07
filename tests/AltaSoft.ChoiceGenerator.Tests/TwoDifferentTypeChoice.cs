@@ -1,9 +1,11 @@
-﻿//namespace AltaSoft.ChoiceGenerator.Tests;
+﻿using AltaSoft.Choice;
 
-////[Choice]
-//public sealed partial class TwoDifferentTypeChoice
-//{
-//    public partial string? StringChoice { get; set; }
+namespace AltaSoft.ChoiceGenerator.Tests;
 
-//    public partial int? IntChoice { get; set; }
-//}
+[Choice]
+public sealed partial class TwoDifferentTypeChoice
+{
+    public partial string? StringChoice { get; set; }
+
+    public partial int? IntChoice { get; set; }
+}
