@@ -102,7 +102,17 @@ internal static class Executor
                 sb.AppendSummary(p.Summary);
 
             sb.AppendLine("[DisallowNull]");
-            sb.Append("[XmlElement(\"").Append(p.XmlNameValue).AppendLine("\")]");
+
+            var isDateOnly = p.IsDateOnly();
+            if (isDateOnly)
+            {
+                sb.AppendLine("[XmlIgnore]");
+            }
+            else
+            {
+                sb.Append("[XmlElement(\"").Append(p.XmlNameValue).AppendLine("\")]");
+            }
+
             sb.Append("public partial ").Append(p.TypeName).Append("? ").Append(p.Name)
                 .OpenBracket();
 
@@ -118,6 +128,19 @@ internal static class Executor
             .CloseBracket();
 
             sb.NewLine();
+
+            if (isDateOnly)
+            {
+                sb.Append("[XmlElement(\"").Append(p.XmlNameValue).AppendLine("\")]");
+                sb.AppendLine("[JsonIgnore]");
+
+                sb.Append($"public string? {p.Name}Surrogate")
+                    .OpenBracket()
+                    .Append("get => ").Append(p.Name).AppendLine("?.ToString(\"yyyy-MM-dd\", CultureInfo.InvariantCulture);")
+                    .Append("set => ").Append(p.Name).AppendLine(" =value is null? null : DateOnly.Parse(value, CultureInfo.InvariantCulture);")
+                    .CloseBracket();
+                sb.NewLine();
+            }
         }
 
         sb.NewLine();
@@ -145,6 +168,17 @@ internal static class Executor
 
         if (!ProcessImplicitOperators(sb, typeSymbol.Name, processedProperties))
             sb.NewLine();
+
+        foreach (var p in processedProperties.Where(x => x.TypeSymbol.IsValueType && !x.IsDateOnly()).Select(x => x.Name))
+        {
+            sb.AppendSummary($"Determines whether the <see cref=\"{p}\"/> property should be serialized.")
+                .AppendBlock("returns", $"<c>true</c> if <see cref=\"{p}\"/> has a value; otherwise, <c>false</c>.");
+
+            sb.AppendLine("[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]");
+            sb.Append("public bool ShouldSerialize").Append(p).Append("() => ").Append(p)
+                .AppendLine(".HasValue;")
+                .NewLine();
+        }
 
         sb.AppendSummary("<para>Choice enumeration</para>");
 
@@ -292,6 +326,7 @@ internal static class Executor
         "System",
         "System.ComponentModel",
         "System.Diagnostics.CodeAnalysis",
+        "System.Globalization",
         "System.Text.Json",
         "System.Text.Json.Serialization",
         "System.Xml",

@@ -19,6 +19,7 @@ public sealed partial record Authorisation1Choice
     [XmlTag("Prtry")]
     public partial Proprietary? Proprietary { get; set; }
 
+
 }
 
 public class Proprietary

@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using AltaSoft.Choice.Generator.Extensions;
+using Microsoft.CodeAnalysis;
 
 namespace AltaSoft.Choice.Generator.Models;
 
@@ -44,6 +45,13 @@ internal sealed class PropertyDetails
     /// </summary>
     internal ITypeSymbol TypeSymbol { get; private set; }
 
+    /// <summary>
+    /// returns if the type is dateOnly
+    /// </summary>
+    internal bool IsDateOnly()
+    {
+        return TypeSymbol.IsValueType && TypeSymbol.GetFullName()?.Replace("?", "") == "System.DateOnly";
+    }
     /// <summary>
     /// Initializes a new instance of the <see cref="PropertyDetails"/> class.
     /// </summary>
