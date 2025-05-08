@@ -80,6 +80,7 @@ using AltaSoft.Choice;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml;
@@ -215,6 +216,15 @@ public sealed partial record Authorisation1Choice
     public static implicit operator Authorisation1Choice(Proprietary value) => CreateAsProprietary(value);
 
     /// <summary>
+    /// Determines whether the <see cref="Code"/> property should be serialized.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if <see cref="Code"/> has a value; otherwise, <c>false</c>.
+    /// </returns>
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public bool ShouldSerializeCode() => Code.HasValue;
+
+    /// <summary>
     /// <para>Choice enumeration</para>
     /// </summary>
     [XmlType("ChoiceOf.Authorisation1Choice")]
@@ -232,7 +242,6 @@ public sealed partial record Authorisation1Choice
 }
 
 ```
-
 ---
 
 ## 💡 Example Usage

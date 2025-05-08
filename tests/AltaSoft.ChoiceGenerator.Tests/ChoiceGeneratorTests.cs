@@ -12,34 +12,104 @@ public class ChoiceGeneratorTests
 {
     private static readonly JsonSerializerOptions s_options = new()
     {
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         Converters = { new JsonStringEnumConverter() }
     };
 
     [Fact]
-    public void MultipleAssignments_ShouldAssignCorrectly()
+    public void DateOnlyTypeXmlSerialization()
     {
-        Authorisation1Choice choice = Authorisation1Code.Two;
-        Assert.Equal(Authorisation1Code.Two, choice.Code);
-        Assert.Null(choice.Proprietary);
-        Assert.Equal(Authorisation1Choice.ChoiceOf.Code, choice.ChoiceType);
+        const string codeXml = """
+                               <DateTypeChoice>
+                                 <OnlyDate>2020-01-01</OnlyDate>
+                               </DateTypeChoice>
+                               """;
 
-        choice.Proprietary = new Proprietary { Other = "1234" };
-        Assert.Null(choice.Code);
-        Assert.Equal("1234", choice.Proprietary?.Other);
-        Assert.Equal(Authorisation1Choice.ChoiceOf.Proprietary, choice.ChoiceType);
+        var serializer = new XmlSerializer(typeof(DateTypeChoice));
+        using var reader = new StringReader(codeXml);
+
+        var value = (DateTypeChoice)serializer.Deserialize(reader)!;
+
+        var settings = new XmlWriterSettings
+        {
+            OmitXmlDeclaration = true, // 👈 removes the XML declaration
+            Indent = true              // optional: nicely formats the output
+        };
+        // Serialize back to XML
+        using var sw = new StringWriter();
+        using var writer = XmlWriter.Create(sw, settings);
+
+        serializer.Serialize(writer, value, XmlNamespaceHelper.EmptyNamespace);
+
+        var serializedXml = sw.ToString();
+        Assert.Equal(codeXml, serializedXml);
 
     }
 
     [Fact]
-    public void ImplicitConversions_ShouldConvertCorrectly()
+    public void DateTimeTypeXmlSerialization()
     {
-        Authorisation1Choice choice = Authorisation1Code.Two;
-        Assert.Equal(Authorisation1Code.Two, choice.Code);
-        Assert.Null(choice.Proprietary);
+        const string codeXml = """
+                               <DateTypeChoice>
+                                 <DateTimeChoice>2020-01-01T00:00:00</DateTimeChoice>
+                               </DateTypeChoice>
+                               """;
 
-        choice = new Proprietary { Other = "1234" };
-        Assert.Null(choice.Code);
-        Assert.Equal("1234", choice.Proprietary?.Other);
+        var serializer = new XmlSerializer(typeof(DateTypeChoice));
+        using var reader = new StringReader(codeXml);
+
+        var value = (DateTypeChoice)serializer.Deserialize(reader)!;
+
+        var settings = new XmlWriterSettings
+        {
+            OmitXmlDeclaration = true, // 👈 removes the XML declaration
+            Indent = true              // optional: nicely formats the output
+        };
+        // Serialize back to XML
+        using var sw = new StringWriter();
+        using var writer = XmlWriter.Create(sw, settings);
+
+        serializer.Serialize(writer, value, XmlNamespaceHelper.EmptyNamespace);
+
+        var serializedXml = sw.ToString();
+        Assert.Equal(codeXml, serializedXml);
+
+    }
+
+    [Fact]
+    public void TwoValueTypeXmlSerialization()
+    {
+        const string codeXml = """
+                               <TwoValueTypeChoice>
+                                 <Code>Two</Code>
+                               </TwoValueTypeChoice>
+                               """;
+
+        var serializer = new XmlSerializer(typeof(TwoValueTypeChoice));
+        using var reader = new StringReader(codeXml);
+
+        var value = (TwoValueTypeChoice)serializer.Deserialize(reader)!;
+
+        Assert.NotNull(value);
+        Assert.Equal(Authorisation1Code.Two, value.Code);
+        Assert.NotNull(value.Code);
+        Assert.Null(value.Integer);
+        Assert.Equal(TwoValueTypeChoice.ChoiceOf.Code, value.ChoiceType);
+
+        var settings = new XmlWriterSettings
+        {
+            OmitXmlDeclaration = true, // 👈 removes the XML declaration
+            Indent = true              // optional: nicely formats the output
+        };
+        // Serialize back to XML
+        using var sw = new StringWriter();
+        using var writer = XmlWriter.Create(sw, settings);
+
+        serializer.Serialize(writer, value, XmlNamespaceHelper.EmptyNamespace);
+
+        var serializedXml = sw.ToString();
+        Assert.Equal(codeXml, serializedXml);
 
     }
 
@@ -74,8 +144,7 @@ public class ChoiceGeneratorTests
         serializer.Serialize(writer, value, XmlNamespaceHelper.EmptyNamespace);
 
         var serializedXml = sw.ToString();
-        Assert.Contains("<Cd>Two</Cd>", serializedXml);
-        Assert.DoesNotContain("<Other", serializedXml);
+        Assert.Equal(codeXml, serializedXml);
 
     }
 
@@ -116,50 +185,17 @@ public class ChoiceGeneratorTests
         var serializedXml = sw.ToString();
 
         // Assertions on serialized XML
-        Assert.Contains("<Prtry>", serializedXml);
-        Assert.Contains("<Other>value</Other>", serializedXml);
-        Assert.DoesNotContain("<Cd>", serializedXml); // Ensure "Cd" is not present
-    }
-
-    [Fact]
-    public void XmlSerializationDeserializationOfCode_ShouldSucceed()
-    {
-        const string codeXml = """
-                               <Authorisation1Choice>
-                                 <Cd>Two</Cd>
-                               </Authorisation1Choice>
-                               """;
-
-        // Deserialize from XML
-        var serializer = new XmlSerializer(typeof(Authorisation1Choice));
-        using var reader = new StringReader(codeXml);
-        var value = (Authorisation1Choice)serializer.Deserialize(reader)!;
-
-        // Assertions on deserialized object
-        Assert.NotNull(value);
-        Assert.Equal(Authorisation1Code.Two, value.Code);
-        Assert.Null(value.Proprietary);
-        Assert.Equal(Authorisation1Choice.ChoiceOf.Code, value.ChoiceType);
-
-        // Serialize back to XML
-        using var writer = new StringWriter();
-        serializer.Serialize(writer, value);
-
-        var serializedXml = writer.ToString();
-
-        // Assertions on serialized XML
-        Assert.Contains("<Cd>Two</Cd>", serializedXml);
-        Assert.DoesNotContain("<Prtry>", serializedXml);
+        Assert.Equal(codeXml, serializedXml);
     }
 
     [Fact]
     public void JsonSerializationDeserializationOfEnumValue_ShouldSucceed()
     {
         const string codeJson = """
-                            {
-                              "cd": "Two"
-                            }
-                            """;
+                                {
+                                  "cd": "Two"
+                                }
+                                """;
 
         var value = JsonSerializer.Deserialize<Authorisation1Choice>(codeJson, s_options);
         Assert.NotNull(value);
@@ -168,16 +204,15 @@ public class ChoiceGeneratorTests
         Assert.Equal(Authorisation1Choice.ChoiceOf.Code, value.ChoiceType);
 
         var convertedToJson = JsonSerializer.Serialize(value, s_options);
-        Assert.Contains("\"cd\":\"Two\"", convertedToJson);
+        Assert.Equal(codeJson, convertedToJson);
     }
-
     [Fact]
     public void JsonSerializationDeserializationOfComplexValue_ShouldSucceed()
     {
         const string codeJson = """
                                 {
                                   "Proprietary": {
-                                  "Other": "value"
+                                    "Other": "value"
                                   }
                                 }
                                 """;
@@ -190,7 +225,7 @@ public class ChoiceGeneratorTests
         Assert.Equal(Authorisation1Choice.ChoiceOf.Proprietary, value.ChoiceType);
 
         var convertedToJson = JsonSerializer.Serialize(value, s_options);
-        Assert.Contains("\"Other\":\"value\"", convertedToJson);
+        Assert.Equal(codeJson, convertedToJson);
     }
 
     [Fact]
@@ -235,5 +270,32 @@ public class ChoiceGeneratorTests
 
         value = choice.Match(_ => "strOne", _ => "strTwo");
         Assert.Equal("strTwo", value);
+    }
+    [Fact]
+    public void MultipleAssignments_ShouldAssignCorrectly()
+    {
+        Authorisation1Choice choice = Authorisation1Code.Two;
+        Assert.Equal(Authorisation1Code.Two, choice.Code);
+        Assert.Null(choice.Proprietary);
+        Assert.Equal(Authorisation1Choice.ChoiceOf.Code, choice.ChoiceType);
+
+        choice.Proprietary = new Proprietary { Other = "1234" };
+        Assert.Null(choice.Code);
+        Assert.Equal("1234", choice.Proprietary?.Other);
+        Assert.Equal(Authorisation1Choice.ChoiceOf.Proprietary, choice.ChoiceType);
+
+    }
+
+    [Fact]
+    public void ImplicitConversions_ShouldConvertCorrectly()
+    {
+        Authorisation1Choice choice = Authorisation1Code.Two;
+        Assert.Equal(Authorisation1Code.Two, choice.Code);
+        Assert.Null(choice.Proprietary);
+
+        choice = new Proprietary { Other = "1234" };
+        Assert.Null(choice.Code);
+        Assert.Equal("1234", choice.Proprietary?.Other);
+
     }
 }

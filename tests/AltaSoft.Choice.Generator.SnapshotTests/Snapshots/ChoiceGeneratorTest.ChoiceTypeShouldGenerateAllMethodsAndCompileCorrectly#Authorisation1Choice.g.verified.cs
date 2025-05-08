@@ -13,6 +13,7 @@ using AltaSoft.Choice;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml;
@@ -146,6 +147,15 @@ public sealed partial class Authorisation1Choice
     /// <see cref="Authorisation1Choice"/> instance representing the code.
     /// </returns>
     public static implicit operator Authorisation1Choice(string value) => CreateAsProprietary(value);
+
+    /// <summary>
+    /// Determines whether the <see cref="Code"/> property should be serialized.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if <see cref="Code"/> has a value; otherwise, <c>false</c>.
+    /// </returns>
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public bool ShouldSerializeCode() => Code.HasValue;
 
     /// <summary>
     /// <para>Choice enumeration</para>
