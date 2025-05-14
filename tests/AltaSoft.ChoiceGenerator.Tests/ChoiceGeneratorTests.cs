@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 using AltaSoft.Choice;
+using AltaSoft.ChoiceGenerator.Tests.OtherNamespace;
 using Xunit;
 
 namespace AltaSoft.ChoiceGenerator.Tests;

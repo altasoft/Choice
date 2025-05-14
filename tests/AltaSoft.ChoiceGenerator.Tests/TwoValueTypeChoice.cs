@@ -1,4 +1,5 @@
 ﻿using AltaSoft.Choice;
+using AltaSoft.ChoiceGenerator.Tests.OtherNamespace;
 
 namespace AltaSoft.ChoiceGenerator.Tests
 {

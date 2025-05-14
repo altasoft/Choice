@@ -57,14 +57,14 @@ public sealed partial class Authorisation1Choice
         }
     }
 
-    private string? _proprietary;
+    private TestNamespace.OtherNamespace.Authorisation1Code? _proprietary;
 
     /// <summary>
     /// Specifies the authorisation, in a free text form.
     /// </summary>
     [DisallowNull]
     [XmlElement("Proprietary")]
-    public partial string? Proprietary
+    public partial TestNamespace.OtherNamespace.Authorisation1Code? Proprietary
     {
         get => _proprietary;
         set
@@ -83,10 +83,10 @@ public sealed partial class Authorisation1Choice
     public static TestNamespace.Authorisation1Choice CreateAsCode(string value) => new () { Code = value };
 
     /// <summary>
-    /// Creates a new <see cref="TestNamespace.Authorisation1Choice"/> instance and sets its value using the specified <see cref="string"/>.
+    /// Creates a new <see cref="TestNamespace.Authorisation1Choice"/> instance and sets its value using the specified <see cref="TestNamespace.OtherNamespace.Authorisation1Code"/>.
     /// </summary>
     /// <param name="value">The value to assign to the created choice instance.</param>
-    public static TestNamespace.Authorisation1Choice CreateAsProprietary(string value) => new () { Proprietary = value };
+    public static TestNamespace.Authorisation1Choice CreateAsProprietary(TestNamespace.OtherNamespace.Authorisation1Code value) => new () { Proprietary = value };
 
     /// <summary>
     /// <para>Applies the appropriate function based on the current choice type</para>
@@ -96,12 +96,12 @@ public sealed partial class Authorisation1Choice
     /// <param name="matchProprietary">Function to invoke if the choice is a <see cref="ChoiceOf.Proprietary"/> value</param>
     public TResult Match<TResult>(
     	Func<string, TResult> matchCode, 
-    	Func<string, TResult> matchProprietary)
+    	Func<TestNamespace.OtherNamespace.Authorisation1Code, TResult> matchProprietary)
     {
         return ChoiceType switch
         {
             ChoiceOf.Code => matchCode(Code!),
-            ChoiceOf.Proprietary => matchProprietary(Proprietary!),
+            ChoiceOf.Proprietary => matchProprietary(Proprietary!.Value),
             _ => throw new InvalidOperationException($"Invalid ChoiceType. '{ChoiceType}'")
         };
     }
@@ -113,7 +113,7 @@ public sealed partial class Authorisation1Choice
     /// <param name="matchProprietary">Action to invoke if the choice is a <see cref="ChoiceOf.Proprietary"/> value</param>
     public void Switch(
     	Action<string> matchCode, 
-    	Action<string> matchProprietary)
+    	Action<TestNamespace.OtherNamespace.Authorisation1Code> matchProprietary)
     {
         switch (ChoiceType)
         {
@@ -122,7 +122,7 @@ public sealed partial class Authorisation1Choice
                 return;
 
             case ChoiceOf.Proprietary:
-                matchProprietary(Proprietary!);
+                matchProprietary(Proprietary!.Value);
                 return;
 
             default:
@@ -130,6 +130,32 @@ public sealed partial class Authorisation1Choice
         }
     }
 
+    /// <summary>
+    /// Implicitly converts an <see cref="string"/> to an <see cref="Authorisation1Choice"/>.
+    /// </summary>
+    /// <param name="value">The <see cref="string"/> to convert.</param>
+    /// <returns>
+    /// <see cref="Authorisation1Choice"/> instance representing the code.
+    /// </returns>
+    public static implicit operator Authorisation1Choice(string value) => CreateAsCode(value);
+
+    /// <summary>
+    /// Implicitly converts an <see cref="TestNamespace.OtherNamespace.Authorisation1Code"/> to an <see cref="Authorisation1Choice"/>.
+    /// </summary>
+    /// <param name="value">The <see cref="TestNamespace.OtherNamespace.Authorisation1Code"/> to convert.</param>
+    /// <returns>
+    /// <see cref="Authorisation1Choice"/> instance representing the code.
+    /// </returns>
+    public static implicit operator Authorisation1Choice(TestNamespace.OtherNamespace.Authorisation1Code value) => CreateAsProprietary(value);
+
+    /// <summary>
+    /// Determines whether the <see cref="Proprietary"/> property should be serialized.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if <see cref="Proprietary"/> has a value; otherwise, <c>false</c>.
+    /// </returns>
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public bool ShouldSerializeProprietary() => Proprietary.HasValue;
 
     /// <summary>
     /// <para>Choice enumeration</para>

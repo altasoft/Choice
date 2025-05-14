@@ -82,15 +82,15 @@ internal static class RoslynExt
     /// <returns>The namespace from the base namespace declaration.</returns>
     public static string GetNamespace(this BaseNamespaceDeclarationSyntax self) => self.Name.ToString();
 
-    ///// <summary>
-    ///// Gets the fully qualified name of the specified type declaration syntax, including its namespace.
-    ///// </summary>
-    ///// <param name="self">The type declaration syntax to retrieve the fully qualified name from.</param>
-    ///// <returns>The fully qualified name of the type declaration.</returns>
-    //public static string GetClassFullName(this TypeDeclarationSyntax self)
-    //{
-    //    return self.GetNamespace() + "." + self.GetClassName();
-    //}
+    /// <summary>
+    /// Gets the fully qualified name of the specified type declaration syntax, including its namespace.
+    /// </summary>
+    /// <param name="self">The type declaration syntax to retrieve the fully qualified name from.</param>
+    /// <returns>The fully qualified name of the type declaration.</returns>
+    public static string GetClassFullName(this TypeDeclarationSyntax self)
+    {
+        return self.GetNamespace() + "." + self.GetClassName();
+    }
 
     /// <summary>
     /// Gets the name of the class specified in the type declaration syntax.

@@ -25,33 +25,37 @@ public class ChoiceGeneratorTest
             using System.Xml.Schema;
             using System.Xml.Serialization;
             using AltaSoft.Choice;
+            using TestNamespace.OtherNamespace;
                               
-            namespace TestNamespace;
-                              
-            [Choice]
-            public sealed partial class Authorisation1Choice
+            namespace TestNamespace
             {
-                              
-                /// <summary>
-                /// <para>Specifies the authorisation, in a coded form.</para>
-                /// </summary>
-                [XmlElement("Cd")]
-                                 
-                public partial Authorisation1Code? Code { get; set; }
-                                   
-                /// <summary>
-                /// <para>Specifies the authorisation, in a free text form.</para>
-                /// </summary>
-                [XmlElement("Prtry")]
-                                 
-                public partial string? Proprietary { get; set; }
-                              
+                [Choice]
+                public sealed partial class Authorisation1Choice
+                {
+                    /// <summary>
+                    /// <para>Specifies the authorisation, in a coded form.</para>
+                    /// </summary>
+                    [XmlElement("Cd")]
+                                     
+                    public partial Authorisation1Code? Code { get; set; }
+                                       
+                    /// <summary>
+                    /// <para>Specifies the authorisation, in a free text form.</para>
+                    /// </summary>
+                    [XmlElement("Prtry")]
+                                     
+                    public partial string? Proprietary { get; set; }
+                                  
+                }
             }
-                              
-            public enum Authorisation1Code
+                           
+            namespace TestNamespace.OtherNamespace
             {
-                One,
-                Two
+                public enum Authorisation1Code
+                {
+                    One,
+                    Two
+                }
             }
             """;
 
@@ -71,27 +75,37 @@ public class ChoiceGeneratorTest
             using System.Xml.Schema;
             using System.Xml.Serialization;
             using AltaSoft.Choice;
+            using TestNamespace.OtherNamespace;
                               
-            namespace TestNamespace;
-                              
-            [Choice]
-            public sealed partial class Authorisation1Choice
+            namespace TestNamespace
             {
-                              
-                /// <summary>
-                /// <para>Specifies the authorisation, in a coded form.</para>
-                /// </summary>
-                [XmlElement("Cd")]
-                                 
-                public partial string? Code { get; set; }
-                                   
-                /// <summary>
-                /// <para>Specifies the authorisation, in a free text form.</para>
-                /// </summary>
-                [XmlElement("Prtry")]
-                                 
-                public partial string? Proprietary { get; set; }
-                              
+                [Choice]
+                public sealed partial class Authorisation1Choice
+                {
+                                  
+                    /// <summary>
+                    /// <para>Specifies the authorisation, in a coded form.</para>
+                    /// </summary>
+                    [XmlElement("Cd")]
+                                     
+                    public partial string? Code { get; set; }
+                                       
+                    /// <summary>
+                    /// <para>Specifies the authorisation, in a free text form.</para>
+                    /// </summary>
+                    [XmlElement("Prtry")]
+                                     
+                    public partial Authorisation1Code? Proprietary { get; set; }
+                }
+            }
+            
+            namespace TestNamespace.OtherNamespace
+            {
+                public enum Authorisation1Code
+                {
+                    One,
+                    Two
+                }
             }
             """;
 
