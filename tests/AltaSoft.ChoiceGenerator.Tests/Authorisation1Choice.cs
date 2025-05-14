@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using AltaSoft.Choice;
+using AltaSoft.ChoiceGenerator.Tests.OtherNamespace;
 
 namespace AltaSoft.ChoiceGenerator.Tests;
 
@@ -18,18 +19,4 @@ public sealed partial record Authorisation1Choice
     /// </summary>
     [XmlTag("Prtry")]
     public partial Proprietary? Proprietary { get; set; }
-
-
-}
-
-public class Proprietary
-{
-    public string Other { get; set; } = null!;
-
-}
-
-public enum Authorisation1Code
-{
-    One,
-    Two
 }

@@ -180,42 +180,6 @@ internal static class CompilationExt
         friendlyName += ">";
         return ns + '.' + friendlyName;
     }
-    public static string GetFriendlyName(this ITypeSymbol type)
-    {
-        var ns = type.ContainingNamespace?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.OmittedAsContaining))!;
-
-        if (s_typeAliases.TryGetValue(ns + "." + type.MetadataName, out var result))
-        {
-            return result;
-        }
-
-        var friendlyName = type.MetadataName;
-        if (friendlyName.Length == 0)
-            friendlyName = type.OriginalDefinition.ToDisplayString();
-
-        if (type is not INamedTypeSymbol namedType)
-            return friendlyName;
-
-        if (!namedType.IsGenericType)
-            return friendlyName;
-
-        if (namedType.IsNullableValueType(out var underlyingType))
-            return underlyingType!.GetFullName();
-
-        var iBacktick = friendlyName.IndexOf('`');
-        if (iBacktick > 0)
-            friendlyName = friendlyName.Remove(iBacktick);
-        friendlyName += "<";
-
-        var typeParameters = namedType.TypeArguments;
-        for (var i = 0; i < typeParameters.Length; ++i)
-        {
-            var typeParamName = typeParameters[i].ToString();
-            friendlyName += i == 0 ? typeParamName : "," + typeParamName;
-        }
-        friendlyName += ">";
-        return friendlyName;
-    }
 
     /// <summary>
     /// Determines whether the specified type symbol is a Nullable&lt;T&gt; value type and, if so, provides the underlying value type symbol.

@@ -206,7 +206,7 @@ internal static class Executor
         var xmlTagAttribute = propertySymbol.GetAttributes().FirstOrDefault(x => x.AttributeClass?.ToDisplayString() == Constants.XmlTagAttributeFullName);
         var xmlElementName = (string?)xmlTagAttribute?.ConstructorArguments[0].Value ?? propertySymbol.Name;
 
-        var typeFullName = propertySymbol.Type.GetFriendlyName();
+        var typeFullName = propertySymbol.Type.GetFullName();
         var propertyName = propertySymbol.Name;
 
         return new PropertyDetails(

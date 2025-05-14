@@ -39,14 +39,14 @@ public sealed partial class Authorisation1Choice
     [XmlIgnore]
     public ChoiceOf ChoiceType { get; private set; }
 
-    private TestNamespace.Authorisation1Code? _code;
+    private TestNamespace.OtherNamespace.Authorisation1Code? _code;
 
     /// <summary>
     /// Specifies the authorisation, in a coded form.
     /// </summary>
     [DisallowNull]
     [XmlElement("Code")]
-    public partial TestNamespace.Authorisation1Code? Code
+    public partial TestNamespace.OtherNamespace.Authorisation1Code? Code
     {
         get => _code;
         set
@@ -77,10 +77,10 @@ public sealed partial class Authorisation1Choice
 
 
     /// <summary>
-    /// Creates a new <see cref="TestNamespace.Authorisation1Choice"/> instance and sets its value using the specified <see cref="TestNamespace.Authorisation1Code"/>.
+    /// Creates a new <see cref="TestNamespace.Authorisation1Choice"/> instance and sets its value using the specified <see cref="TestNamespace.OtherNamespace.Authorisation1Code"/>.
     /// </summary>
     /// <param name="value">The value to assign to the created choice instance.</param>
-    public static TestNamespace.Authorisation1Choice CreateAsCode(TestNamespace.Authorisation1Code value) => new () { Code = value };
+    public static TestNamespace.Authorisation1Choice CreateAsCode(TestNamespace.OtherNamespace.Authorisation1Code value) => new () { Code = value };
 
     /// <summary>
     /// Creates a new <see cref="TestNamespace.Authorisation1Choice"/> instance and sets its value using the specified <see cref="string"/>.
@@ -95,7 +95,7 @@ public sealed partial class Authorisation1Choice
     /// <param name="matchCode">Function to invoke if the choice is a <see cref="ChoiceOf.Code"/> value</param>
     /// <param name="matchProprietary">Function to invoke if the choice is a <see cref="ChoiceOf.Proprietary"/> value</param>
     public TResult Match<TResult>(
-    	Func<TestNamespace.Authorisation1Code, TResult> matchCode, 
+    	Func<TestNamespace.OtherNamespace.Authorisation1Code, TResult> matchCode, 
     	Func<string, TResult> matchProprietary)
     {
         return ChoiceType switch
@@ -112,7 +112,7 @@ public sealed partial class Authorisation1Choice
     /// <param name="matchCode">Action to invoke if the choice is a <see cref="ChoiceOf.Code"/> value</param>
     /// <param name="matchProprietary">Action to invoke if the choice is a <see cref="ChoiceOf.Proprietary"/> value</param>
     public void Switch(
-    	Action<TestNamespace.Authorisation1Code> matchCode, 
+    	Action<TestNamespace.OtherNamespace.Authorisation1Code> matchCode, 
     	Action<string> matchProprietary)
     {
         switch (ChoiceType)
@@ -131,13 +131,13 @@ public sealed partial class Authorisation1Choice
     }
 
     /// <summary>
-    /// Implicitly converts an <see cref="TestNamespace.Authorisation1Code"/> to an <see cref="Authorisation1Choice"/>.
+    /// Implicitly converts an <see cref="TestNamespace.OtherNamespace.Authorisation1Code"/> to an <see cref="Authorisation1Choice"/>.
     /// </summary>
-    /// <param name="value">The <see cref="TestNamespace.Authorisation1Code"/> to convert.</param>
+    /// <param name="value">The <see cref="TestNamespace.OtherNamespace.Authorisation1Code"/> to convert.</param>
     /// <returns>
     /// <see cref="Authorisation1Choice"/> instance representing the code.
     /// </returns>
-    public static implicit operator Authorisation1Choice(TestNamespace.Authorisation1Code value) => CreateAsCode(value);
+    public static implicit operator Authorisation1Choice(TestNamespace.OtherNamespace.Authorisation1Code value) => CreateAsCode(value);
 
     /// <summary>
     /// Implicitly converts an <see cref="string"/> to an <see cref="Authorisation1Choice"/>.
