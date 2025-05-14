@@ -14,12 +14,12 @@
 
   <PropertyGroup>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
-	<ProjectUrl>https://github.com/altasoft/ChoiceGenerator</ProjectUrl>
-	<RepositoryUrl>https://github.com/altasoft/ChoiceGenerator</RepositoryUrl>
+	<ProjectUrl>https://github.com/altasoft/Choice</ProjectUrl>
+	<RepositoryUrl>https://github.com/altasoft/Choice</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	<PackageProjectUrl>https://github.com/altasoft/ChoiceGenerator</PackageProjectUrl>
+	<PackageProjectUrl>https://github.com/altasoft/Choice</PackageProjectUrl>
 	<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 	<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 	<EnableNETAnalyzers>True</EnableNETAnalyzers>
