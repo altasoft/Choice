@@ -15,7 +15,5 @@ namespace AltaSoft.ChoiceGenerator.Tests
         /// <para>Specifies the authorisation, in a free text form.</para>
         /// </summary>
         public partial DateTime? DateTimeChoice { get; set; }
-
-
     }
 }
