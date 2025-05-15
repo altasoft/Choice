@@ -27,6 +27,9 @@ namespace TestNamespace;
 
 public sealed partial class Authorisation1Choice
 {
+    /// <summary>
+    /// Constructor for Serialization/Deserialization
+    /// </summary>
     [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
     public Authorisation1Choice()
     {

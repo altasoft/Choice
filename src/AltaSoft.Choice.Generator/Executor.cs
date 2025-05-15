@@ -75,6 +75,8 @@ internal static class Executor
         if (!hasDefaultCtor)
         {
             var isSealedType = typeSymbol.IsSealed;
+            sb.AppendSummary("Constructor for Serialization/Deserialization");
+
             if (isSealedType)
             {
                 sb.AppendLine("[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]");
