@@ -40,6 +40,7 @@ public sealed partial class Authorisation1Choice
     /// </summary>
     [JsonIgnore]
     [XmlIgnore]
+    [ChoiceTypeProperty]
     public ChoiceOf ChoiceType { get; private set; }
 
     private TestNamespace.OtherNamespace.Authorisation1Code? _code;

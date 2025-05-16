@@ -90,6 +90,7 @@ internal static class Executor
         sb.AppendSummary("<para>Choice enum </para>");
         sb.AppendLine("[JsonIgnore]");
         sb.AppendLine("[XmlIgnore]");
+        sb.AppendLine("[ChoiceTypeProperty]");
         sb.AppendLine("public ChoiceOf ChoiceType { get; private set; }");
         sb.NewLine();
 
