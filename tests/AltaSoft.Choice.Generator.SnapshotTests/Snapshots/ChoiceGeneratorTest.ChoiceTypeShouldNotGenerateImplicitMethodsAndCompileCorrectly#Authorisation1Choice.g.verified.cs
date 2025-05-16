@@ -49,6 +49,7 @@ public sealed partial class Authorisation1Choice
     /// </summary>
     [DisallowNull]
     [XmlElement("Code")]
+    [ChoiceProperty]
     public partial string? Code
     {
         get => _code;
@@ -67,6 +68,7 @@ public sealed partial class Authorisation1Choice
     /// </summary>
     [DisallowNull]
     [XmlElement("Proprietary")]
+    [ChoiceProperty]
     public partial TestNamespace.OtherNamespace.Authorisation1Code? Proprietary
     {
         get => _proprietary;

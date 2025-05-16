@@ -115,6 +115,8 @@ internal static class Executor
                 sb.Append("[XmlElement(\"").Append(p.XmlNameValue).AppendLine("\")]");
             }
 
+            sb.AppendLine("[ChoiceProperty]");
+
             sb.Append("public partial ").Append(p.TypeName).Append("? ").Append(p.Name)
                 .OpenBracket();
 
