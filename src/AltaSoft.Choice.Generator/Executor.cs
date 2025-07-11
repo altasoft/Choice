@@ -104,8 +104,6 @@ internal static class Executor
             if (p.Summary is not null)
                 sb.AppendSummary(p.Summary);
 
-            sb.AppendLine("[DisallowNull]");
-
             var isDateOnly = p.IsDateOnly();
             if (isDateOnly)
             {
@@ -113,6 +111,7 @@ internal static class Executor
             }
             else
             {
+                sb.AppendLine("[DisallowNull]");
                 sb.Append("[XmlElement(\"").Append(p.XmlNameValue).AppendLine("\")]");
             }
 
@@ -234,10 +233,15 @@ internal static class Executor
         {
             sb.AppendSummary($"Implicitly converts an <see cref=\"{property.TypeName}\"/> to an <see cref=\"{typeName}\"/>.");
             sb.AppendParamDescription("value", $"The <see cref=\"{property.TypeName}\"/> to convert.");
-            sb.AppendBlock("returns", $"<see cref=\"{typeName}\"/> instance representing the code.");
+            sb.AppendBlock("returns", $"<see cref=\"{typeName}\"/> instance representing the code.").NewLine();
+            sb.AppendLine("[return: NotNullIfNotNull(parameterName: nameof(value))]");
 
-            sb.Append("public static implicit operator ").Append(typeName).Append("(")
-                .Append(property.TypeName).Append(" value) => CreateAs").Append(property.Name).AppendLine("(value);");
+            sb.Append("public static implicit operator ").Append(typeName).Append("? (")
+                .Append(property.TypeName).AppendLine("? value) ")
+                .OpenBracket()
+                .Append("return value is null ? null : CreateAs").Append(property.Name).Append("(value").AppendIf(property.TypeSymbol.IsValueType, ".Value").AppendLine(");")
+                .CloseBracket();
+
             sb.NewLine();
         }
 

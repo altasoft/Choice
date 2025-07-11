@@ -367,8 +367,7 @@ public sealed class SourceCodeBuilder
             {
                 _sb.AppendLine();
             }
-            else
-            if (line[0] == '#')
+            else if (line[0] == '#')
             {
                 _sb.AppendLine(line);
             }

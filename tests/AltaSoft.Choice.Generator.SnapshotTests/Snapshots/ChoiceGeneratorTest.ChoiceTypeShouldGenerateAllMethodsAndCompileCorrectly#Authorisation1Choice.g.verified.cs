@@ -143,7 +143,12 @@ public sealed partial class Authorisation1Choice
     /// <returns>
     /// <see cref="Authorisation1Choice"/> instance representing the code.
     /// </returns>
-    public static implicit operator Authorisation1Choice(TestNamespace.OtherNamespace.Authorisation1Code value) => CreateAsCode(value);
+
+    [return: NotNullIfNotNull(parameterName: nameof(value))]
+    public static implicit operator Authorisation1Choice? (TestNamespace.OtherNamespace.Authorisation1Code? value) 
+    {
+        return value is null ? null : CreateAsCode(value.Value);
+    }
 
     /// <summary>
     /// Implicitly converts an <see cref="string"/> to an <see cref="Authorisation1Choice"/>.
@@ -152,7 +157,12 @@ public sealed partial class Authorisation1Choice
     /// <returns>
     /// <see cref="Authorisation1Choice"/> instance representing the code.
     /// </returns>
-    public static implicit operator Authorisation1Choice(string value) => CreateAsProprietary(value);
+
+    [return: NotNullIfNotNull(parameterName: nameof(value))]
+    public static implicit operator Authorisation1Choice? (string? value) 
+    {
+        return value is null ? null : CreateAsProprietary(value);
+    }
 
     /// <summary>
     /// Determines whether the <see cref="Code"/> property should be serialized.

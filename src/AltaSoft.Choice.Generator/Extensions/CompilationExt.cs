@@ -143,7 +143,7 @@ internal static class CompilationExt
 
         return builder.ToString();
     }
-
+#pragma warning disable S1643
     public static string GetFullName(this ITypeSymbol type)
     {
         var ns = type.ContainingNamespace?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.OmittedAsContaining))!;
@@ -175,12 +175,14 @@ internal static class CompilationExt
         for (var i = 0; i < typeParameters.Length; ++i)
         {
             var typeParamName = typeParameters[i].ToString();
+
             friendlyName += i == 0 ? typeParamName : "," + typeParamName;
+
         }
         friendlyName += ">";
         return ns + '.' + friendlyName;
     }
-
+#pragma warning restore S1643
     /// <summary>
     /// Determines whether the specified type symbol is a Nullable&lt;T&gt; value type and, if so, provides the underlying value type symbol.
     /// </summary>
