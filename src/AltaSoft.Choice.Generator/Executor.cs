@@ -81,7 +81,7 @@ internal static class Executor
             {
                 sb.AppendLine("[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]");
             }
-            sb.Append(!typeSymbol.IsAbstract ? "public " : "protected ").Append(typeSymbol.Name).AppendLine("()")
+            sb.Append(typeSymbol.IsAbstract ? "protected " : "public ").Append(typeSymbol.Name).AppendLine("()")
                 .OpenBracket()
                 .CloseBracket()
                 .NewLine();
