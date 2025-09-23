@@ -43,14 +43,14 @@ internal sealed class PropertyDetails
     /// <summary>
     /// The type symbol of the property.
     /// </summary>
-    internal ITypeSymbol TypeSymbol { get; private set; }
+    internal ITypeSymbol TypeSymbol { get; }
 
     /// <summary>
     /// returns if the type is dateOnly
     /// </summary>
     internal bool IsDateOnly()
     {
-        return TypeSymbol.IsValueType && TypeSymbol.GetFullName()?.Replace("?", "") == "System.DateOnly";
+        return TypeSymbol.IsValueType && TypeSymbol.GetFullName().Replace("?", "") == "System.DateOnly";
     }
     /// <summary>
     /// Initializes a new instance of the <see cref="PropertyDetails"/> class.

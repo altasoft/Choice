@@ -151,10 +151,8 @@ internal static class Executor
 
         foreach (var prop in processedProperties)
         {
-
             var typeFullName = typeSymbol.GetFullName();
-            sb.AppendSummary($"Creates a new <see cref=\"{typeFullName}\"/> instance " +
-                             $"and sets its value using the specified <see cref=\"{prop.TypeName}\"/>.");
+            sb.AppendSummary($"Creates a new <see cref=\"{typeFullName}\"/> instance and sets its value using the specified {prop.TypeSymbol.GetCrefForType()}.");
             sb.AppendParamDescription("value", "The value to assign to the created choice instance.");
 
             sb.Append($"public static {typeFullName} CreateAs").Append(prop.Name).Append("(")
@@ -231,8 +229,8 @@ internal static class Executor
 
         foreach (var property in processedProperties)
         {
-            sb.AppendSummary($"Implicitly converts an <see cref=\"{property.TypeName}\"/> to an <see cref=\"{typeName}\"/>.");
-            sb.AppendParamDescription("value", $"The <see cref=\"{property.TypeName}\"/> to convert.");
+            sb.AppendSummary($"Implicitly converts an {property.TypeSymbol.GetCrefForType()} to an <see cref=\"{typeName}\"/>.");
+            sb.AppendParamDescription("value", $"The {property.TypeSymbol.GetCrefForType()} to convert.");
             sb.AppendBlock("returns", $"<see cref=\"{typeName}\"/> instance representing the code.").NewLine();
             sb.AppendLine("[return: NotNullIfNotNull(parameterName: nameof(value))]");
 

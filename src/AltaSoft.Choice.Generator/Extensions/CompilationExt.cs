@@ -202,6 +202,26 @@ internal static class CompilationExt
     }
 
     /// <summary>
+    /// Builds a short XML documentation fragment that references the provided <paramref name="type"/> using a <see cref="object"/> cref tag.
+    /// For array types the fragment references the element type and appends the word "array." to indicate the collection nature
+    /// (for example: &lt;see cref="System.String"/&gt; array.). For non-array types the fragment is simply the cref reference followed by a period.
+    /// </summary>
+    /// <param name="type">The Roslyn <see cref="ITypeSymbol"/> to create a cref for. This should not be <c>null</c>.</param>
+    /// <returns>
+    /// A string containing an XML &lt;see cref="System.Object" /&gt; tag that references the type. Example results:
+    /// - For a type: "&lt;see cref="Namespace.TypeName"/&gt;."
+    /// - For an array: "&lt;see cref="Namespace.ElementType"/&gt; array."
+    /// </returns>
+    public static string GetCrefForType(this ITypeSymbol type)
+    {
+        if (type is IArrayTypeSymbol array)
+        {
+            return $"<see cref=\"{array.ElementType.GetFullName()}\"/> array";
+        }
+        return $"<see cref=\"{type.GetFullName()}\"/>";
+    }
+
+    /// <summary>
     /// A dictionary that provides aliases for common .NET framework types, mapping their full names to shorter aliases.
     /// </summary>
     private static readonly Dictionary<string, string> s_typeAliases = new(StringComparer.Ordinal)

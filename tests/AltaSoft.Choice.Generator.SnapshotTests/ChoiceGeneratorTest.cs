@@ -64,6 +64,37 @@ public class ChoiceGeneratorTest
             Assert.Single(x);
         });
     }
+    [Fact]
+    public Task ChoiceTypeShouldGenerateDocumentationCorrectly_ForArrayInChoice()
+    {
+        const string source =
+            """
+            using System;
+            using System.Xml;
+            using System.Xml.Schema;
+            using System.Xml.Serialization;
+            using AltaSoft.Choice;
+            
+            namespace TestNamespace
+            {
+                [Choice]
+                public sealed partial class ArrayInTypeChoice
+                {
+                    public partial string? StringChoice { get; set; }
+            
+                    public partial AccountId[]? Accounts { get; set; }
+                }
+            
+                public sealed record AccountId(int Id);
+            }
+            
+            """;
+
+        return TestHelper.Verify(source, (_, x, _) =>
+        {
+            Assert.Single(x);
+        });
+    }
 
     [Fact]
     public Task ChoiceTypeShouldNotGenerateImplicitMethodsAndCompileCorrectly()
@@ -120,7 +151,7 @@ public class ChoiceGeneratorTest
         internal static Task Verify(string source, Action<ImmutableArray<Diagnostic>, List<string>, GeneratorDriver>? additionalChecks = null)
         {
             List<Assembly> assemblies = [typeof(XmlElementAttribute).Assembly, typeof(JsonSerializer).Assembly];
-            var (diagnostics, output, driver) = TestHelpers.GetGeneratedOutput<AltaSoft.Choice.Generator.ChoiceGenerator>(source, assemblies);
+            var (diagnostics, output, driver) = TestHelpers.GetGeneratedOutput<ChoiceGenerator>(source, assemblies);
 
             Assert.Empty(diagnostics.Where(x => x.Severity == DiagnosticSeverity.Error));
             additionalChecks?.Invoke(diagnostics, output, driver);
