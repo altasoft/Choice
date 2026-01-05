@@ -31,7 +31,6 @@
   <ItemGroup>
 	<ProjectReference Include="..\..\src\AltaSoft.Choice.Generator\AltaSoft.Choice.Generator.csproj"/>
 	<ProjectReference Include="..\..\src\AltaSoft.Choice\AltaSoft.Choice.csproj" />
-  			<ProjectReference Include="..\..\src\AltaSoft.Choice.Generator\AltaSoft.Choice.Generator.csproj" />
 </ItemGroup>
 
 </Project>
