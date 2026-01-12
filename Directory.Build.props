@@ -31,12 +31,10 @@
 	<None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-	<PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-		<DebugType>embedded</DebugType>
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
-		<EmbedAllSources>false</EmbedAllSources>
-		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-		<Deterministic>true</Deterministic>
-	</PropertyGroup>
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+	<EmbedUntrackedSources>true</EmbedUntrackedSources>
+	<EmbedAllSources>false</EmbedAllSources>
+	<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
 
 </Project>
