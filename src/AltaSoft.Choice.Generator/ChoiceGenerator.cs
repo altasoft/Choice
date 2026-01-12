@@ -11,7 +11,7 @@ namespace AltaSoft.Choice.Generator;
 public sealed class ChoiceGenerator : IIncrementalGenerator
 {
     /// <summary>
-    /// Initializes the DomainPrimitiveGenerator and registers it as a source code generator.
+    /// Initializes the ChoiceGenerator and registers it as a source code generator.
     /// </summary>
     /// <param name="context">The generator initialization context.</param>
     public void Initialize(IncrementalGeneratorInitializationContext context)

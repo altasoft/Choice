@@ -1,45 +1,33 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<IsPackable>false</IsPackable>
-		<IsTestProject>true</IsTestProject>
+  <PropertyGroup>
+	<TargetFramework>net10.0</TargetFramework>
+	<Nullable>enable</Nullable>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<IsPackable>false</IsPackable>
+	<IsTestProject>true</IsTestProject>
 
-		<NoWarn>1591</NoWarn>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-		<PackageReference Include="xunit" Version="2.8.1" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="coverlet.collector" Version="6.0.2">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-	</ItemGroup>
+	<NoWarn>1591</NoWarn>
+  </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Microsoft.XmlSerializer.Generator" Version="9.0.4" PrivateAssets="all" />
+	<PackageReference Include="Microsoft.NET.Test.Sdk" />
+	<PackageReference Include="xunit" />
+	<PackageReference Include="xunit.runner.visualstudio">
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  <PrivateAssets>all</PrivateAssets>
+	</PackageReference>
+	<PackageReference Include="coverlet.collector">
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  <PrivateAssets>all</PrivateAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.XmlSerializer.Generator" PrivateAssets="all" />
   </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\src\AltaSoft.Choice.Generator\AltaSoft.Choice.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" ExcludeAssets="runtime" />
-		<ProjectReference Include="..\..\src\AltaSoft.Choice\AltaSoft.Choice.csproj" />
-	</ItemGroup>
 
-
-	<!--<PropertyGroup>
-		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Remove="$(CompilerGeneratedFilesOutputPath)/**/*.cs" />
-	</ItemGroup>-->
+  <ItemGroup>
+	<ProjectReference Include="..\..\src\AltaSoft.Choice.Generator\AltaSoft.Choice.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" ExcludeAssets="runtime" />
+	<ProjectReference Include="..\..\src\AltaSoft.Choice\AltaSoft.Choice.csproj" />
+  </ItemGroup>
 
 </Project>
