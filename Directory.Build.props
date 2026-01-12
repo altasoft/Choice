@@ -31,7 +31,7 @@
 	<None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-	<PropertyGroup Condition=" '$(TF_BUILD)' == 'True' ">
+	<PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
 		<DebugType>embedded</DebugType>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<EmbedAllSources>false</EmbedAllSources>
