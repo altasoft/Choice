@@ -26,6 +26,11 @@ internal sealed class PropertyDetails
     internal string XmlNameValue { get; private set; }
 
     /// <summary>
+    /// The access modifiers for the property, such as "public", "private", etc.
+    /// </summary>
+    public string Modifiers { get; set; }
+
+    /// <summary>
     /// The summary documentation for the property.
     /// </summary>
     internal string? Summary { get; private set; }
@@ -52,22 +57,16 @@ internal sealed class PropertyDetails
     {
         return TypeSymbol.IsValueType && TypeSymbol.GetFullName().Replace("?", "") == "System.DateOnly";
     }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PropertyDetails"/> class.
     /// </summary>
-    /// <param name="name">The name of the property.</param>
-    /// <param name="typeName">The type name of the property.</param>
-    /// <param name="namespace">The namespace of the property.</param>
-    /// <param name="xmlNameValue">The XML name value of the property.</param>
-    /// <param name="summary">The summary documentation for the property.</param>
-    /// <param name="getterAccessibility">The access modifiers for the property's getter.</param>
-    /// <param name="setterAccessibility">The access modifiers for the property's setter.</param>
-    /// <param name="typeSymbol">The type symbol of the property.</param>
     public PropertyDetails(
         string name,
         string typeName,
         string @namespace,
         string xmlNameValue,
+        string modifiers,
         string? summary,
         Accessibility getterAccessibility,
         Accessibility setterAccessibility,
@@ -77,10 +76,10 @@ internal sealed class PropertyDetails
         TypeName = typeName;
         Namespace = @namespace;
         XmlNameValue = xmlNameValue;
+        Modifiers = modifiers;
         Summary = summary;
         GetterAccessibility = getterAccessibility;
         SetterAccessibility = setterAccessibility;
         TypeSymbol = typeSymbol;
     }
-
 }

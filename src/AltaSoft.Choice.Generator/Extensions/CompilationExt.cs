@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -92,57 +91,45 @@ internal static class CompilationExt
     /// <summary>
     /// Gets the modifiers for the named type symbol.
     /// </summary>
-    /// <param name="self">The named type symbol to retrieve modifiers from.</param>
-    /// <returns>The modifiers as a string, or null if the type is null or has no modifiers.</returns>
-    public static string? GetModifiers(this INamedTypeSymbol? self)
+    public static string? GetModifiers(this INamedTypeSymbol self)
     {
-        var declaringSyntax = self?.DeclaringSyntaxReferences;
-        if (self is null || declaringSyntax is null or { Length: 0 })
+        var declaringSyntax = self.DeclaringSyntaxReferences;
+        if (declaringSyntax is { Length: 0 })
             return null;
 
         foreach (var syntax in declaringSyntax)
         {
-            if (syntax.GetSyntax() is TypeDeclarationSyntax typeDeclaration && string.Equals(typeDeclaration.GetClassName(), self.GetClassNameWithArguments(), StringComparison.Ordinal))
+            if (syntax.GetSyntax() is TypeDeclarationSyntax typeDeclaration)
             {
                 var modifiers = typeDeclaration.Modifiers.ToString();
 
                 return modifiers;
             }
         }
-
         return null;
     }
 
-    #endregion Accessibility
     /// <summary>
-    /// Gets the class name including generic arguments as a string.
+    /// Gets the modifiers for the property type symbol.
     /// </summary>
-    /// <param name="type">The named type symbol to get the class name from.</param>
-    /// <returns>The class name including generic arguments as a string.</returns>
-    public static string GetClassNameWithArguments(this INamedTypeSymbol? type)
+    public static string GetModifiers(this IPropertySymbol self)
     {
-        if (type is null)
-            return string.Empty;
+        var declaringSyntax = self.DeclaringSyntaxReferences;
+        if (declaringSyntax is { Length: 0 })
+            return "public";
 
-        var builder = new StringBuilder(type.Name);
-
-        if (type.TypeArguments.Length == 0)
-            return builder.ToString();
-
-        builder.Append('<');
-        for (var index = 0; index < type.TypeArguments.Length; index++)
+        foreach (var syntax in declaringSyntax)
         {
-            var arg = type.TypeArguments[index];
-            builder.Append(arg.Name);
-
-            if (index != type.TypeArguments.Length - 1)
-                builder.Append(", ");
+            if (syntax.GetSyntax() is PropertyDeclarationSyntax propertyDeclarationSyntax)
+            {
+                return propertyDeclarationSyntax.Modifiers.ToString();
+            }
         }
-
-        builder.Append('>');
-
-        return builder.ToString();
+        return "public";
     }
+
+    #endregion Accessibility
+
 #pragma warning disable S1643
     public static string GetFullName(this ITypeSymbol type)
     {
@@ -183,6 +170,7 @@ internal static class CompilationExt
         return ns + '.' + friendlyName;
     }
 #pragma warning restore S1643
+
     /// <summary>
     /// Determines whether the specified type symbol is a Nullable&lt;T&gt; value type and, if so, provides the underlying value type symbol.
     /// </summary>

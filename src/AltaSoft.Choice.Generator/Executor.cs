@@ -94,9 +94,10 @@ internal static class Executor
         sb.AppendLine("public ChoiceOf ChoiceType { get; private set; }");
         sb.NewLine();
 
+        var isOnly1Property = processedProperties.Count == 1;
+
         foreach (var p in processedProperties)
         {
-
             var fieldName = p.Name.ToFieldName();
 
             sb.Append("private ").Append(p.TypeName).Append("? ").Append(fieldName).AppendLine(";").NewLine();
@@ -116,12 +117,13 @@ internal static class Executor
             }
 
             sb.AppendLine("[ChoiceProperty]");
-
-            sb.Append("public partial ").Append(p.TypeName).Append("? ").Append(p.Name)
-                .OpenBracket();
+            sb.Append(p.Modifiers).Append(" ");
+            sb.Append(p.TypeName);
+            sb.Append(isOnly1Property ? " " : "? ");
+            sb.Append(p.Name).OpenBracket();
 
             sb.AppendIfNotEmpty(p.GetterAccessibility.GetPropertyAccessibilityString()).Append("get => ")
-            .Append(fieldName).AppendLine(";");
+                .Append(fieldName).AppendLine(";");
 
             sb.AppendIfNotEmpty(p.SetterAccessibility.GetPropertyAccessibilityString()).AppendLine("set")
             .OpenBracket()
@@ -210,12 +212,14 @@ internal static class Executor
 
         var typeFullName = propertySymbol.Type.GetFullName();
         var propertyName = propertySymbol.Name;
+        var modifiers = propertySymbol.GetModifiers();
 
         return new PropertyDetails(
             name: propertyName,
             typeName: typeFullName.Replace("?", ""),
             @namespace: propertySymbol.ContainingNamespace.ToDisplayString(),
             xmlNameValue: xmlElementName,
+            modifiers: modifiers,
             summary: propertySymbol.GetSummaryText(),
             getterAccessibility: propertySymbol.GetMethod?.DeclaredAccessibility ?? Accessibility.NotApplicable,
             setterAccessibility: propertySymbol.SetMethod?.DeclaredAccessibility ?? Accessibility.NotApplicable,

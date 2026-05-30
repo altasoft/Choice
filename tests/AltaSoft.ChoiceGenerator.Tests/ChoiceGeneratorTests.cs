@@ -299,5 +299,20 @@ public class ChoiceGeneratorTests
         Assert.Equal("1234", choice.Proprietary?.Other);
 
     }
+
+    [Fact]
+    public void GenerateSinglePropertyChoice()
+    {
+        var choice = SinglePropertyChoice.CreateAsValue("value");
+
+        Assert.Equal(SinglePropertyChoice.ChoiceOf.Value, choice.ChoiceType);
+        Assert.Equal("value", choice.Value);
+
+        var matched = choice.Match(_ => "ok");
+        Assert.Equal("ok", matched);
+
+        var switched = choice.Match(x => "matched");
+        Assert.Equal("matched", switched);
+    }
 }
 
