@@ -303,9 +303,9 @@ public class ChoiceGeneratorTests
     [Fact]
     public void GenerateSinglePropertyChoice()
     {
-        var choice = SinglePropertyChoice.CreateAsValue("value");
+        var choice = SinglePropertyStringChoice.CreateAsValue("value");
 
-        Assert.Equal(SinglePropertyChoice.ChoiceOf.Value, choice.ChoiceType);
+        Assert.Equal(SinglePropertyStringChoice.ChoiceOf.Value, choice.ChoiceType);
         Assert.Equal("value", choice.Value);
 
         var matched = choice.Match(_ => "ok");

@@ -100,7 +100,12 @@ internal static class Executor
         {
             var fieldName = p.Name.ToFieldName();
 
-            sb.Append("private ").Append(p.TypeName).Append("? ").Append(fieldName).AppendLine(";").NewLine();
+            sb.Append("private ").Append(p.TypeName);
+            if (isOnly1Property)
+                sb.Append(" ");
+            else
+                sb.Append("? ");
+            sb.Append(fieldName).AppendLine(";").NewLine();
 
             if (p.Summary is not null)
                 sb.AppendSummary(p.Summary);
@@ -127,11 +132,15 @@ internal static class Executor
 
             sb.AppendIfNotEmpty(p.SetterAccessibility.GetPropertyAccessibilityString()).AppendLine("set")
             .OpenBracket()
-            .Append(fieldName).AppendLine(" = value ?? throw new InvalidOperationException(\"Choice value cannot be null\");")
-            .AppendLines(processedProperties.Where(x => x.Name != p.Name).Select(v => $"{v.Name.ToFieldName()} = null;"))
-            .Append("ChoiceType = ChoiceOf.").Append(p.Name).AppendLine(";")
-            .CloseBracket()
-            .CloseBracket();
+            .Append(fieldName);
+            if (isOnly1Property)
+                sb.AppendLine(" = value;");
+            else
+                sb.AppendLine(" = value ?? throw new InvalidOperationException(\"Choice value cannot be null\");");
+            sb.AppendLines(processedProperties.Where(x => x.Name != p.Name).Select(v => $"{v.Name.ToFieldName()} = null;"))
+                .Append("ChoiceType = ChoiceOf.").Append(p.Name).AppendLine(";")
+                .CloseBracket()
+                .CloseBracket();
 
             sb.NewLine();
 
@@ -179,9 +188,12 @@ internal static class Executor
                 .AppendBlock("returns", $"<c>true</c> if <see cref=\"{p}\"/> has a value; otherwise, <c>false</c>.");
 
             sb.AppendLine("[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]");
-            sb.Append("public bool ShouldSerialize").Append(p).Append("() => ").Append(p)
-                .AppendLine(".HasValue;")
-                .NewLine();
+            sb.Append("public bool ShouldSerialize").Append(p).Append("() => ");
+            if (isOnly1Property)
+                sb.AppendLine("true;");
+            else
+                sb.Append(p).AppendLine(".HasValue;");
+            sb.NewLine();
         }
 
         sb.AppendSummary("<para>Choice enumeration</para>");
@@ -252,7 +264,6 @@ internal static class Executor
 
     private static void ProcessMatch(SourceCodeBuilder sb, List<PropertyDetails> processedProperties)
     {
-
         sb.AppendSummary("<para>Applies the appropriate function based on the current choice type</para>");
         sb.AppendTypeParamDescription("TResult", "The return type of the provided match functions");
         processedProperties.ForEach(x =>
@@ -276,10 +287,13 @@ internal static class Executor
 
         sb.AppendLine("return ChoiceType switch")
             .OpenBracket();
+
+        var isOnlyProperty = processedProperties.Count == 1;
+
         foreach (var prop in processedProperties)
         {
             sb.Append($"ChoiceOf.{prop.Name} => match").Append($"{prop.Name}({prop.Name}!")
-                .AppendIf(prop.TypeSymbol.IsValueType, ".Value")
+                .AppendIf(!isOnlyProperty && prop.TypeSymbol.IsValueType, ".Value")
                 .AppendLine("),");
         }
 
@@ -291,7 +305,6 @@ internal static class Executor
 
     private static void ProcessSwitch(SourceCodeBuilder sb, List<PropertyDetails> processedProperties)
     {
-
         sb.AppendSummary("<para>Applies the appropriate Action based on the current choice type</para>");
         processedProperties.ForEach(x =>
         {
@@ -314,11 +327,14 @@ internal static class Executor
 
         sb.AppendLine("switch (ChoiceType)")
             .OpenBracket();
+
+        var isOnlyProperty = processedProperties.Count == 1;
+
         foreach (var prop in processedProperties)
         {
             sb.AppendSwitchCase($"ChoiceOf.{prop.Name}")
                 .Append($"match{prop.Name}({prop.Name}!")
-                .AppendIf(prop.TypeSymbol.IsValueType, ".Value")
+                .AppendIf(!isOnlyProperty && prop.TypeSymbol.IsValueType, ".Value")
                 .AppendLine(");")
                 .AppendLine("return;")
                 .CloseSwitchCase()
@@ -345,3 +361,4 @@ internal static class Executor
         "System.Xml.Schema"
     ];
 }
+
