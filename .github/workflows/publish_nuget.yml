@@ -80,7 +80,7 @@ jobs:
       - name: Publish symbols
         id: publish_symbols
         continue-on-error: true
-        run: dotnet nuget push "nupkg/*.snupkg" --skip-duplicate --api-key ${{ steps.login.outputs.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+        run: dotnet nuget push "nupkg/*.snupkg" --skip-duplicate --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" -s https://api.nuget.org/v3/index.json
 
       - name: Warn about publish credential failure
         if: steps.publish_package.outcome == 'failure' || steps.publish_symbols.outcome == 'failure'
