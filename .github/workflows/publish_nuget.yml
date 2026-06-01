@@ -75,7 +75,7 @@ jobs:
       - name: Publish package
         id: publish_package
         continue-on-error: true
-        run: dotnet nuget push "nupkg/*.nupkg" --skip-duplicate --api-key ${{ steps.login.outputs.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+        run: dotnet nuget push "nupkg/*.nupkg" --skip-duplicate --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" -s https://api.nuget.org/v3/index.json
 
       - name: Publish symbols
         id: publish_symbols
