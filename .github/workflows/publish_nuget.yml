@@ -49,6 +49,7 @@ jobs:
     needs: build
     permissions:
       contents: read
+      id-token: write
 
     steps:
       - name: Setup .NET
@@ -65,15 +66,21 @@ jobs:
           name: nuget-packages
           path: nupkg
 
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
       - name: Publish package
         id: publish_package
         continue-on-error: true
-        run: dotnet nuget push "nupkg/*.nupkg" --skip-duplicate -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+        run: dotnet nuget push "nupkg/*.nupkg" --skip-duplicate --api-key ${{ steps.login.outputs.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
 
       - name: Publish symbols
         id: publish_symbols
         continue-on-error: true
-        run: dotnet nuget push "nupkg/*.snupkg" --skip-duplicate -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+        run: dotnet nuget push "nupkg/*.snupkg" --skip-duplicate --api-key ${{ steps.login.outputs.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
 
       - name: Warn about publish credential failure
         if: steps.publish_package.outcome == 'failure' || steps.publish_symbols.outcome == 'failure'
