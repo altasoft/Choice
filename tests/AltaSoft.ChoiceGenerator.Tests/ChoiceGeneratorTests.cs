@@ -314,5 +314,71 @@ public class ChoiceGeneratorTests
         var switched = choice.Match(x => "matched");
         Assert.Equal("matched", switched);
     }
+
+    [Fact]
+    public void XmlNamespaceChoice_ShouldRoundTripWithNamespaces()
+    {
+        const string expectedXml = """
+                                   <XmlNamespaceChoice>
+                                     <Cd xmlns="urn:test:code">TEST-CODE</Cd>
+                                   </XmlNamespaceChoice>
+                                   """;
+
+        var serializer = new XmlSerializer(typeof(XmlNamespaceChoice));
+        using var reader = new StringReader(expectedXml);
+
+        var value = (XmlNamespaceChoice)serializer.Deserialize(reader)!;
+
+        Assert.NotNull(value);
+        Assert.Equal(XmlNamespaceChoice.ChoiceOf.Code, value.ChoiceType);
+        Assert.Equal("TEST-CODE", value.Code);
+        Assert.Null(value.Proprietary);
+
+        var settings = new XmlWriterSettings
+        {
+            OmitXmlDeclaration = true,
+            Indent = true
+        };
+        using var sw = new StringWriter();
+        using var writer = XmlWriter.Create(sw, settings);
+
+        serializer.Serialize(writer, value, XmlNamespaceHelper.EmptyNamespace);
+
+        var serializedXml = sw.ToString();
+        Assert.Equal(expectedXml, serializedXml);
+    }
+
+    [Fact]
+    public void XmlNamespaceChoice_Proprietary_ShouldSerializeWithNamespace()
+    {
+        const string expectedXml = """
+                                   <XmlNamespaceChoice>
+                                     <Prtry xmlns="urn:test:proprietary">PROPRIETARY-DATA</Prtry>
+                                   </XmlNamespaceChoice>
+                                   """;
+
+        var serializer = new XmlSerializer(typeof(XmlNamespaceChoice));
+        using var reader = new StringReader(expectedXml);
+
+        var value = (XmlNamespaceChoice)serializer.Deserialize(reader)!;
+
+        Assert.NotNull(value);
+        Assert.Equal(XmlNamespaceChoice.ChoiceOf.Proprietary, value.ChoiceType);
+        Assert.Null(value.Code);
+        Assert.Equal("PROPRIETARY-DATA", value.Proprietary);
+
+        var settings = new XmlWriterSettings
+        {
+            OmitXmlDeclaration = true,
+            Indent = true
+        };
+        using var sw = new StringWriter();
+        using var writer = XmlWriter.Create(sw, settings);
+
+        serializer.Serialize(writer, value, XmlNamespaceHelper.EmptyNamespace);
+
+        var serializedXml = sw.ToString();
+        Assert.Equal(expectedXml, serializedXml);
+    }
 }
 

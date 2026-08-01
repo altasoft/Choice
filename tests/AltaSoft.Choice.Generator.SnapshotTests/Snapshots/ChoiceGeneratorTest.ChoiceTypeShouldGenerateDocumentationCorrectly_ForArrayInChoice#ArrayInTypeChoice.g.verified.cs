@@ -159,6 +159,24 @@ public sealed partial class ArrayInTypeChoice
     }
 
     /// <summary>
+    /// Determines whether the <see cref="StringChoice"/> property should be serialized.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if <see cref="StringChoice"/> is the active choice; otherwise, <c>false</c>.
+    /// </returns>
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public bool ShouldSerializeStringChoice() => ChoiceType == ChoiceOf.StringChoice;
+
+    /// <summary>
+    /// Determines whether the <see cref="Accounts"/> property should be serialized.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if <see cref="Accounts"/> is the active choice; otherwise, <c>false</c>.
+    /// </returns>
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public bool ShouldSerializeAccounts() => ChoiceType == ChoiceOf.Accounts;
+
+    /// <summary>
     /// <para>Choice enumeration</para>
     /// </summary>
     [XmlType("ChoiceOf.ArrayInTypeChoice")]

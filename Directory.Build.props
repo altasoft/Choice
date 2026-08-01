@@ -9,8 +9,8 @@
 	<Authors>ALTA Software llc.</Authors>
 	<Product>Choice generator</Product>
 	<Company>ALTA Software llc.</Company>
-	<Copyright>Copyright © 2024 ALTA Software llc.</Copyright>
-	<Version>2.1.5</Version>
+	<Copyright>Copyright © 2024-2026 ALTA Software llc.</Copyright>
+	<Version>2.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup>

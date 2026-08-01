@@ -165,13 +165,22 @@ public sealed partial class Authorisation1Choice
     }
 
     /// <summary>
+    /// Determines whether the <see cref="Code"/> property should be serialized.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if <see cref="Code"/> is the active choice; otherwise, <c>false</c>.
+    /// </returns>
+    [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+    public bool ShouldSerializeCode() => ChoiceType == ChoiceOf.Code;
+
+    /// <summary>
     /// Determines whether the <see cref="Proprietary"/> property should be serialized.
     /// </summary>
     /// <returns>
-    /// <c>true</c> if <see cref="Proprietary"/> has a value; otherwise, <c>false</c>.
+    /// <c>true</c> if <see cref="Proprietary"/> is the active choice; otherwise, <c>false</c>.
     /// </returns>
     [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-    public bool ShouldSerializeProprietary() => Proprietary.HasValue;
+    public bool ShouldSerializeProprietary() => ChoiceType == ChoiceOf.Proprietary;
 
     /// <summary>
     /// <para>Choice enumeration</para>

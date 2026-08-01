@@ -17,6 +17,14 @@ public sealed class XmlTagAttribute : Attribute
     public string Tag { get; }
 
     /// <summary>
+    /// Gets the XML namespace associated with the property.
+    /// </summary>
+    /// <value>
+    /// A <see cref="string"/> representing the XML namespace, or <c>null</c> if no namespace is specified.
+    /// </value>
+    public string? Namespace { get; set; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="XmlTagAttribute"/> class with the specified XML tag value.
     /// </summary>
     /// <param name="tag">The XML tag value to associate with the property.</param>
