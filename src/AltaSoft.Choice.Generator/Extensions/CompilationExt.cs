@@ -22,6 +22,17 @@ internal static class CompilationExt
         return "_" + char.ToLower(s[0], CultureInfo.InvariantCulture) + s.Substring(1);
     }
 
+    internal static string ToCamelCase(this string s)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+            return s;
+
+        if (s.Length == 1)
+            return s.ToLower(CultureInfo.InvariantCulture);
+
+        return char.ToLower(s[0], CultureInfo.InvariantCulture) + s.Substring(1);
+    }
+
     /// <summary>
     /// Returns the C# keyword representation of a property's <see cref="Accessibility"/> level,
     /// optionally omitting the keyword for <c>public</c> if <paramref name="emptyOnPublic"/> is true.

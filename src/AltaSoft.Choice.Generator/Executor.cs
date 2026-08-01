@@ -44,7 +44,16 @@ internal static class Executor
                         DeclaredAccessibility: Accessibility.Public
                     }).ToList();
 
-                var sb = Process(typeSymbol, partialProperties);
+                // Get ordinary (non-partial) required properties
+                var ordinaryRequiredProperties = typeSymbol.GetMembersOfType<IPropertySymbol>().Where(x
+                    => x is
+                    {
+                        IsStatic: false, IsWriteOnly: false, CanBeReferencedByName: true, IsPartialDefinition: false,
+                        DeclaredAccessibility: Accessibility.Public,
+                        IsRequired: true
+                    }).ToList();
+
+                var sb = Process(typeSymbol, partialProperties, ordinaryRequiredProperties);
                 context.AddSource($"{typeSymbol.Name}.g.cs", sb.ToString());
             }
 
@@ -55,7 +64,7 @@ internal static class Executor
         }
     }
 
-    private static SourceCodeBuilder Process(INamedTypeSymbol typeSymbol, List<IPropertySymbol> properties)
+    private static SourceCodeBuilder Process(INamedTypeSymbol typeSymbol, List<IPropertySymbol> properties, List<IPropertySymbol> ordinaryRequiredProperties)
     {
         var processedProperties = properties.ConvertAll(ProcessProperty);
         var usingStatements = processedProperties.Select(x => x.Namespace).Concat(s_baseNamespaces);
@@ -67,6 +76,10 @@ internal static class Executor
 
         sb.AppendLine("#pragma warning disable CS8774 // Member must have a non-null value when exiting.")
             .AppendLine("#pragma warning disable CS0628 // New protected member declared in sealed type")
+            .AppendLine("#pragma warning disable CS0618 // Type or member is obsolete")
+            .AppendLine("#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor")
+            .AppendLine("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member")
+            .AppendLine("#pragma warning disable IDE0290 // Use primary constructor")
             .NewLine();
 
         sb.AppendClass(typeSymbol.IsRecord, typeSymbol.GetModifiers() ?? "public partial", typeSymbol.Name);
@@ -81,6 +94,7 @@ internal static class Executor
             {
                 sb.AppendLine("[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]");
             }
+
             sb.Append(typeSymbol.IsAbstract ? "protected " : "public ").Append(typeSymbol.Name).AppendLine("()")
                 .OpenBracket()
                 .CloseBracket()
@@ -176,10 +190,56 @@ internal static class Executor
         {
             var typeFullName = typeSymbol.GetFullName();
             sb.AppendSummary($"Creates a new <see cref=\"{typeFullName}\"/> instance and sets its value using the specified {prop.TypeSymbol.GetCrefForType()}.");
-            sb.AppendParamDescription("value", "The value to assign to the created choice instance.");
 
-            sb.Append($"public static {typeFullName} CreateAs").Append(prop.Name).Append("(")
-                .Append(prop.TypeName).Append(" value) => new () { ").Append(prop.Name).AppendLine(" = value };");
+            var requiredParamNames = new HashSet<string>(
+                ordinaryRequiredProperties.Select(x => x.Name.ToCamelCase()),
+                StringComparer.Ordinal);
+
+            var choiceParamName = "value";
+            if (requiredParamNames.Contains(choiceParamName))
+            {
+                choiceParamName = "choiceValue";
+                var suffix = 1;
+                while (requiredParamNames.Contains(choiceParamName))
+                {
+                    choiceParamName = $"choiceValue{suffix}";
+                    suffix++;
+                }
+            }
+
+            // Add parameter descriptions for required ordinary properties
+            foreach (var reqProp in ordinaryRequiredProperties)
+            {
+                var paramName = reqProp.Name.ToCamelCase();
+                sb.AppendParamDescription(paramName, $"The value for the required property {reqProp.Name}.");
+            }
+
+            sb.AppendParamDescription(choiceParamName, "The value to assign to the created choice instance.");
+
+            // Build method signature with required property parameters
+            sb.Append($"public static {typeFullName} CreateAs").Append(prop.Name).Append("(");
+
+            // Add required ordinary properties as parameters first
+            for (var i = 0; i < ordinaryRequiredProperties.Count; i++)
+            {
+                var reqProp = ordinaryRequiredProperties[i];
+                var paramName = reqProp.Name.ToCamelCase();
+                var propType = reqProp.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                sb.Append(propType).Append(" ").Append(paramName).Append(", ");
+            }
+
+            // Add the choice property parameter
+            sb.Append(prop.TypeName).Append(" ").Append(choiceParamName).Append(") => new () { ");
+
+            // Initialize required ordinary properties
+            foreach (var reqProp in ordinaryRequiredProperties)
+            {
+                var paramName = reqProp.Name.ToCamelCase();
+                sb.Append(reqProp.Name).Append(" = ").Append(paramName).Append(", ");
+            }
+
+            // Initialize the choice property
+            sb.Append(prop.Name).Append(" = ").Append(choiceParamName).AppendLine(" };");
 
             sb.NewLine();
         }
@@ -191,8 +251,17 @@ internal static class Executor
 
         sb.NewLine();
 
-        if (!ProcessImplicitOperators(sb, typeSymbol.Name, processedProperties))
+        // Skip implicit operators if there are required ordinary properties
+        // because implicit operators cannot initialize required properties
+        if (ordinaryRequiredProperties.Count == 0)
+        {
+            if (!ProcessImplicitOperators(sb, typeSymbol.Name, processedProperties))
+                sb.NewLine();
+        }
+        else
+        {
             sb.NewLine();
+        }
 
         // Generate ShouldSerialize methods for all properties to prevent xsi:nil in XML
         // This ensures that only the active choice property is serialized
