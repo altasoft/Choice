@@ -26,6 +26,11 @@ internal sealed class PropertyDetails
     internal string XmlNameValue { get; private set; }
 
     /// <summary>
+    /// The XML namespace for the property element.
+    /// </summary>
+    internal string? XmlNamespace { get; private set; }
+
+    /// <summary>
     /// The access modifiers for the property, such as "public", "private", etc.
     /// </summary>
     public string Modifiers { get; set; }
@@ -66,6 +71,7 @@ internal sealed class PropertyDetails
         string typeName,
         string @namespace,
         string xmlNameValue,
+        string? xmlNamespace,
         string modifiers,
         string? summary,
         Accessibility getterAccessibility,
@@ -76,6 +82,7 @@ internal sealed class PropertyDetails
         TypeName = typeName;
         Namespace = @namespace;
         XmlNameValue = xmlNameValue;
+        XmlNamespace = xmlNamespace;
         Modifiers = modifiers;
         Summary = summary;
         GetterAccessibility = getterAccessibility;

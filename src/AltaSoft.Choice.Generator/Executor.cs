@@ -118,7 +118,14 @@ internal static class Executor
             else
             {
                 sb.AppendLine("[DisallowNull]");
-                sb.Append("[XmlElement(\"").Append(p.XmlNameValue).AppendLine("\")]");
+
+                // Generate XmlElement attribute with optional namespace
+                sb.Append("[XmlElement(\"").Append(p.XmlNameValue).Append("\"");
+                if (p.XmlNamespace is not null)
+                {
+                    sb.Append(", Namespace = \"").Append(p.XmlNamespace).Append("\"");
+                }
+                sb.AppendLine(")]");
             }
 
             sb.AppendLine("[ChoiceProperty]");
@@ -146,7 +153,12 @@ internal static class Executor
 
             if (isDateOnly)
             {
-                sb.Append("[XmlElement(\"").Append(p.XmlNameValue).AppendLine("\")]");
+                sb.Append("[XmlElement(\"").Append(p.XmlNameValue).Append("\"");
+                if (p.XmlNamespace is not null)
+                {
+                    sb.Append(", Namespace = \"").Append(p.XmlNamespace).Append("\"");
+                }
+                sb.AppendLine(")]");
                 sb.AppendLine("[JsonIgnore]");
 
                 sb.Append($"public string? {p.Name}Surrogate")
@@ -182,17 +194,21 @@ internal static class Executor
         if (!ProcessImplicitOperators(sb, typeSymbol.Name, processedProperties))
             sb.NewLine();
 
-        foreach (var p in processedProperties.Where(x => x.TypeSymbol.IsValueType && !x.IsDateOnly()).Select(x => x.Name))
+        // Generate ShouldSerialize methods for all properties to prevent xsi:nil in XML
+        // This ensures that only the active choice property is serialized
+        foreach (var p in processedProperties)
         {
-            sb.AppendSummary($"Determines whether the <see cref=\"{p}\"/> property should be serialized.")
-                .AppendBlock("returns", $"<c>true</c> if <see cref=\"{p}\"/> has a value; otherwise, <c>false</c>.");
+            sb.AppendSummary($"Determines whether the <see cref=\"{p.Name}\"/> property should be serialized.")
+                .AppendBlock("returns", $"<c>true</c> if <see cref=\"{p.Name}\"/> is the active choice; otherwise, <c>false</c>.");
 
             sb.AppendLine("[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]");
-            sb.Append("public bool ShouldSerialize").Append(p).Append("() => ");
+            sb.Append("public bool ShouldSerialize").Append(p.Name).Append("() => ");
+
             if (isOnly1Property)
                 sb.AppendLine("true;");
             else
-                sb.Append(p).AppendLine(".HasValue;");
+                sb.Append("ChoiceType == ChoiceOf.").Append(p.Name).AppendLine(";");
+
             sb.NewLine();
         }
 
@@ -222,6 +238,14 @@ internal static class Executor
         var xmlTagAttribute = propertySymbol.GetAttributes().FirstOrDefault(x => x.AttributeClass?.ToDisplayString() == Constants.XmlTagAttributeFullName);
         var xmlElementName = (string?)xmlTagAttribute?.ConstructorArguments[0].Value ?? propertySymbol.Name;
 
+        // Read the Namespace property from XmlTagAttribute if present
+        string? xmlNamespace = null;
+        var namespaceProperty = xmlTagAttribute?.NamedArguments.FirstOrDefault(x => x.Key == "Namespace");
+        if (namespaceProperty?.Value.Value is string ns)
+        {
+            xmlNamespace = ns;
+        }
+
         var typeFullName = propertySymbol.Type.GetFullName();
         var propertyName = propertySymbol.Name;
         var modifiers = propertySymbol.GetModifiers();
@@ -231,6 +255,7 @@ internal static class Executor
             typeName: typeFullName.Replace("?", ""),
             @namespace: propertySymbol.ContainingNamespace.ToDisplayString(),
             xmlNameValue: xmlElementName,
+            xmlNamespace: xmlNamespace,
             modifiers: modifiers,
             summary: propertySymbol.GetSummaryText(),
             getterAccessibility: propertySymbol.GetMethod?.DeclaredAccessibility ?? Accessibility.NotApplicable,
