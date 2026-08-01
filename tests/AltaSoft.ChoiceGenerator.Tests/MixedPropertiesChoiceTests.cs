@@ -466,27 +466,17 @@ public class MixedPropertiesChoiceTests
         // Serialize
         using var sw = new StringWriter();
         using var writer = XmlWriter.Create(sw, s_xmlWriterSettings);
+        serializer.Serialize(writer, payment, XmlNamespaceHelper.EmptyNamespace);
 
-        // This should throw or handle gracefully since no choice is set
-        // The behavior depends on whether ChoiceType has a default value
-        var xml = string.Empty;
-        try
-        {
-            serializer.Serialize(writer, payment, XmlNamespaceHelper.EmptyNamespace);
-            xml = sw.ToString();
-        }
-        catch
-        {
-            // Expected if validation requires a choice to be set
-        }
+        var xml = sw.ToString();
 
-        if (!string.IsNullOrEmpty(xml))
-        {
-            // If serialization succeeded, verify no choice elements with nil
-            Assert.DoesNotContain("xsi:nil=\"true\"", xml);
-            Assert.Contains("<TxnId>TXN-NO-CHOICE</TxnId>", xml);
-            Assert.Contains("<Amt>99.99</Amt>", xml);
-        }
+        Assert.Contains("<TxnId>TXN-NO-CHOICE</TxnId>", xml);
+        Assert.Contains("<Amt>99.99</Amt>", xml);
+        Assert.Contains("<Ccy>GBP</Ccy>", xml);
+        Assert.DoesNotContain("<Card>", xml);
+        Assert.DoesNotContain("<BankTrf>", xml);
+        Assert.DoesNotContain("<Cash>", xml);
+        Assert.DoesNotContain("xsi:nil", xml);
     }
 
     #endregion

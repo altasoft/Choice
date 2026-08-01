@@ -70,14 +70,16 @@ public class RequiredPropertiesChoiceTests
     [Fact]
     public void RequiredPropertyNamedValue_ShouldNotConflictWithChoiceParameter()
     {
-        // This tests the edge case where a required property is named "Value"
-        // The choice parameter should be renamed to avoid conflict
+        // This tests the edge case where required ordinary properties would collide
+        // with both the default choice parameter name and its first fallback.
         var config = ConfigWithValueProperty.CreateAsOptionA(
             "CONFIG-123",  // value (required property)
-            new OptionA("Option A Data") // choiceValue (choice parameter - renamed!)
+            "CONFIG-ALT",  // choiceValue (required property)
+            new OptionA("Option A Data") // choiceValue1 (choice parameter - uniquely renamed)
         );
 
         Assert.Equal("CONFIG-123", config.Value);
+        Assert.Equal("CONFIG-ALT", config.ChoiceValue);
         Assert.Equal(ConfigWithValueProperty.ChoiceOf.OptionA, config.ChoiceType);
         Assert.NotNull(config.OptionA);
         Assert.Equal("Option A Data", config.OptionA.Data);
@@ -85,7 +87,7 @@ public class RequiredPropertiesChoiceTests
 }
 
 /// <summary>
-/// Choice type with a required property named "Value" to test parameter conflict resolution
+/// Choice type with required properties named "Value" and "ChoiceValue" to test parameter conflict resolution
 /// </summary>
 [Choice]
 public sealed partial class ConfigWithValueProperty
@@ -94,6 +96,11 @@ public sealed partial class ConfigWithValueProperty
     /// Required property named "Value" - this would conflict with the default choice parameter name
     /// </summary>
     public required string Value { get; set; }
+
+    /// <summary>
+    /// Required property named "ChoiceValue" - this would conflict with the first fallback choice parameter name
+    /// </summary>
+    public required string ChoiceValue { get; set; }
 
     /// <summary>
     /// Choice property - Option A

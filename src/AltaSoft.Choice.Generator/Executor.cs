@@ -191,15 +191,19 @@ internal static class Executor
             var typeFullName = typeSymbol.GetFullName();
             sb.AppendSummary($"Creates a new <see cref=\"{typeFullName}\"/> instance and sets its value using the specified {prop.TypeSymbol.GetCrefForType()}.");
 
-            // Check if any required property would conflict with default "value" parameter name
+            var requiredParamNames = new HashSet<string>(
+                ordinaryRequiredProperties.Select(x => x.Name.ToCamelCase()),
+                StringComparer.Ordinal);
+
             var choiceParamName = "value";
-            foreach (var reqProp in ordinaryRequiredProperties)
+            if (requiredParamNames.Contains(choiceParamName))
             {
-                var paramName = reqProp.Name.ToCamelCase();
-                if (paramName == "value")
+                choiceParamName = "choiceValue";
+                var suffix = 1;
+                while (requiredParamNames.Contains(choiceParamName))
                 {
-                    choiceParamName = "choiceValue";
-                    break;
+                    choiceParamName = $"choiceValue{suffix}";
+                    suffix++;
                 }
             }
 

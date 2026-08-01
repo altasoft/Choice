@@ -90,15 +90,17 @@ public sealed partial class ConfigChoice
     /// Creates a new <see cref="TestNamespace.ConfigChoice"/> instance and sets its value using the specified <see cref="TestNamespace.OptionA"/>.
     /// </summary>
     /// <param name="value">The value for the required property Value.</param>
-    /// <param name="choiceValue">The value to assign to the created choice instance.</param>
-    public static TestNamespace.ConfigChoice CreateAsOptionA(string value, TestNamespace.OptionA choiceValue) => new () { Value = value, OptionA = choiceValue };
+    /// <param name="choiceValue">The value for the required property ChoiceValue.</param>
+    /// <param name="choiceValue1">The value to assign to the created choice instance.</param>
+    public static TestNamespace.ConfigChoice CreateAsOptionA(string value, string choiceValue, TestNamespace.OptionA choiceValue1) => new () { Value = value, ChoiceValue = choiceValue, OptionA = choiceValue1 };
 
     /// <summary>
     /// Creates a new <see cref="TestNamespace.ConfigChoice"/> instance and sets its value using the specified <see cref="TestNamespace.OptionB"/>.
     /// </summary>
     /// <param name="value">The value for the required property Value.</param>
-    /// <param name="choiceValue">The value to assign to the created choice instance.</param>
-    public static TestNamespace.ConfigChoice CreateAsOptionB(string value, TestNamespace.OptionB choiceValue) => new () { Value = value, OptionB = choiceValue };
+    /// <param name="choiceValue">The value for the required property ChoiceValue.</param>
+    /// <param name="choiceValue1">The value to assign to the created choice instance.</param>
+    public static TestNamespace.ConfigChoice CreateAsOptionB(string value, string choiceValue, TestNamespace.OptionB choiceValue1) => new () { Value = value, ChoiceValue = choiceValue, OptionB = choiceValue1 };
 
     /// <summary>
     /// <para>Applies the appropriate function based on the current choice type</para>

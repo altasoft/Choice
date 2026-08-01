@@ -299,6 +299,11 @@ public class ChoiceGeneratorTest
                     public required string Value { get; set; }
 
                     /// <summary>
+                    /// Required property named "ChoiceValue" - tests fallback parameter conflict resolution
+                    /// </summary>
+                    public required string ChoiceValue { get; set; }
+
+                    /// <summary>
                     /// Choice property - Option A
                     /// </summary>
                     public partial OptionA? OptionA { get; set; }
