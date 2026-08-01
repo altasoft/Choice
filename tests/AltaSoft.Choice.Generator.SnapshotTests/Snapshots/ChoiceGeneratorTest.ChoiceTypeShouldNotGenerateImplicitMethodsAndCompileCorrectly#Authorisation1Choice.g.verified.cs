@@ -24,6 +24,9 @@ namespace TestNamespace;
 
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
 #pragma warning disable CS0628 // New protected member declared in sealed type
+#pragma warning disable CS0618 // Type or member is obsolete
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable IDE0290 // Use primary constructor
 
 public sealed partial class Authorisation1Choice
 {

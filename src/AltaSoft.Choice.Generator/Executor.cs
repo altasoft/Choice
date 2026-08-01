@@ -76,6 +76,9 @@ internal static class Executor
 
         sb.AppendLine("#pragma warning disable CS8774 // Member must have a non-null value when exiting.")
             .AppendLine("#pragma warning disable CS0628 // New protected member declared in sealed type")
+            .AppendLine("#pragma warning disable CS0618 // Type or member is obsolete")
+            .AppendLine("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member")
+            .AppendLine("#pragma warning disable IDE0290 // Use primary constructor")
             .NewLine();
 
         sb.AppendClass(typeSymbol.IsRecord, typeSymbol.GetModifiers() ?? "public partial", typeSymbol.Name);
