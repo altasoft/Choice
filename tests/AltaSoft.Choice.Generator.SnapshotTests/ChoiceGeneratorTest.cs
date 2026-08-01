@@ -226,6 +226,107 @@ public class ChoiceGeneratorTest
         });
     }
 
+    [Fact]
+    public Task ChoiceTypeShouldGenerateWithRequiredOrdinaryProperties()
+    {
+        const string source =
+            """
+            using System;
+            using AltaSoft.Choice;
+
+            namespace TestNamespace
+            {
+                [Choice]
+                public sealed partial class OrderChoice
+                {
+                    /// <summary>
+                    /// Required ordinary property - Order ID
+                    /// </summary>
+                    public required string OrderId { get; set; }
+
+                    /// <summary>
+                    /// Required ordinary property - Customer Name
+                    /// </summary>
+                    public required string CustomerName { get; set; }
+
+                    /// <summary>
+                    /// Choice property - Express delivery
+                    /// </summary>
+                    public partial ExpressDelivery? Express { get; set; }
+
+                    /// <summary>
+                    /// Choice property - Standard delivery
+                    /// </summary>
+                    public partial StandardDelivery? Standard { get; set; }
+                }
+
+                public sealed class ExpressDelivery
+                {
+                    public DateTime DeliveryDate { get; set; }
+                    public decimal SurchargeAmount { get; set; }
+                }
+
+                public sealed class StandardDelivery
+                {
+                    public int DeliveryDays { get; set; }
+                    public decimal ShippingCost { get; set; }
+                }
+            }
+            """;
+
+        return TestHelper.Verify(source, (_, x, _) =>
+        {
+            Assert.Single(x);
+        });
+    }
+
+    [Fact]
+    public Task ChoiceTypeShouldGenerateWithRequiredPropertyNamedValue()
+    {
+        const string source =
+            """
+            using System;
+            using AltaSoft.Choice;
+
+            namespace TestNamespace
+            {
+                [Choice]
+                public sealed partial class ConfigChoice
+                {
+                    /// <summary>
+                    /// Required property named "Value" - tests parameter conflict resolution
+                    /// </summary>
+                    public required string Value { get; set; }
+
+                    /// <summary>
+                    /// Choice property - Option A
+                    /// </summary>
+                    public partial OptionA? OptionA { get; set; }
+
+                    /// <summary>
+                    /// Choice property - Option B
+                    /// </summary>
+                    public partial OptionB? OptionB { get; set; }
+                }
+
+                public sealed class OptionA
+                {
+                    public string Data { get; set; }
+                }
+
+                public sealed class OptionB
+                {
+                    public int Count { get; set; }
+                }
+            }
+            """;
+
+        return TestHelper.Verify(source, (_, x, _) =>
+        {
+            Assert.Single(x);
+        });
+    }
+
     public static class TestHelper
     {
         internal static Task Verify(string source, Action<ImmutableArray<Diagnostic>, List<string>, GeneratorDriver>? additionalChecks = null)
