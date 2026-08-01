@@ -77,6 +77,7 @@ internal static class Executor
         sb.AppendLine("#pragma warning disable CS8774 // Member must have a non-null value when exiting.")
             .AppendLine("#pragma warning disable CS0628 // New protected member declared in sealed type")
             .AppendLine("#pragma warning disable CS0618 // Type or member is obsolete")
+            .AppendLine("#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor")
             .AppendLine("#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member")
             .AppendLine("#pragma warning disable IDE0290 // Use primary constructor")
             .NewLine();
@@ -215,7 +216,7 @@ internal static class Executor
             sb.Append($"public static {typeFullName} CreateAs").Append(prop.Name).Append("(");
 
             // Add required ordinary properties as parameters first
-            for (int i = 0; i < ordinaryRequiredProperties.Count; i++)
+            for (var i = 0; i < ordinaryRequiredProperties.Count; i++)
             {
                 var reqProp = ordinaryRequiredProperties[i];
                 var paramName = reqProp.Name.ToCamelCase();
