@@ -2,7 +2,7 @@
 
 [![NuGet - AltaSoft.Choice](https://img.shields.io/nuget/v/AltaSoft.Choice?label=AltaSoft.Choice)](https://www.nuget.org/packages/AltaSoft.Choice)
 [![NuGet - AltaSoft.Choice.Generator](https://img.shields.io/nuget/v/AltaSoft.Choice.Generator?label=AltaSoft.Choice.Generator)](https://www.nuget.org/packages/AltaSoft.Choice.Generator)
-[![Dot NET 8+](https://img.shields.io/static/v1?label=DOTNET&message=8%2B&color=0c3c60&style=for-the-badge)](https://dotnet.microsoft.com)
+[![Dot NET 10+](https://img.shields.io/static/v1?label=DOTNET&message=10%2B&color=0c3c60&style=for-the-badge)](https://dotnet.microsoft.com)
 
 **AltaSoft.ChoiceGenerator** is a lightweight C# source generator that allows you to define *choice types* (discriminated unions) with minimal syntax.
 
